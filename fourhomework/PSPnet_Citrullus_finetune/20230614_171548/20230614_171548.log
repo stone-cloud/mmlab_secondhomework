@@ -1,0 +1,2114 @@
+2023/06/14 17:16:04 - mmengine - INFO - 
+------------------------------------------------------------
+System environment:
+    sys.platform: win32
+    Python: 3.9.16 (main, Mar  8 2023, 10:39:24) [MSC v.1916 64 bit (AMD64)]
+    CUDA available: True
+    numpy_random_seed: 1899888564
+    GPU 0: NVIDIA GeForce GTX 1660
+    CUDA_HOME: C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.1
+    NVCC: Cuda compilation tools, release 11.1, V11.1.105
+    MSVC: 用于 x64 的 Microsoft (R) C/C++ 优化编译器 19.34.31933 版
+    GCC: n/a
+    PyTorch: 1.12.0+cu113
+    PyTorch compiling details: PyTorch built with:
+  - C++ Version: 199711
+  - MSVC 192829337
+  - Intel(R) Math Kernel Library Version 2020.0.2 Product Build 20200624 for Intel(R) 64 architecture applications
+  - Intel(R) MKL-DNN v2.6.0 (Git Hash 52b5f107dd9cf10910aaa19cb47f3abf9b349815)
+  - OpenMP 2019
+  - LAPACK is enabled (usually provided by MKL)
+  - CPU capability usage: AVX2
+  - CUDA Runtime 11.3
+  - NVCC architecture flags: -gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-gencode;arch=compute_86,code=sm_86;-gencode;arch=compute_37,code=compute_37
+  - CuDNN 8.3.2  (built against CUDA 11.5)
+  - Magma 2.5.4
+  - Build settings: BLAS_INFO=mkl, BUILD_TYPE=Release, CUDA_VERSION=11.3, CUDNN_VERSION=8.3.2, CXX_COMPILER=C:/actions-runner/_work/pytorch/pytorch/builder/windows/tmp_bin/sccache-cl.exe, CXX_FLAGS=/DWIN32 /D_WINDOWS /GR /EHsc /w /bigobj -DUSE_PTHREADPOOL -openmp:experimental -IC:/actions-runner/_work/pytorch/pytorch/builder/windows/mkl/include -DNDEBUG -DUSE_KINETO -DLIBKINETO_NOCUPTI -DUSE_FBGEMM -DUSE_XNNPACK -DSYMBOLICATE_MOBILE_DEBUG_HANDLE -DEDGE_PROFILER_USE_KINETO, LAPACK_INFO=mkl, PERF_WITH_AVX=1, PERF_WITH_AVX2=1, PERF_WITH_AVX512=1, TORCH_VERSION=1.12.0, USE_CUDA=ON, USE_CUDNN=ON, USE_EXCEPTION_PTR=1, USE_GFLAGS=OFF, USE_GLOG=OFF, USE_MKL=ON, USE_MKLDNN=OFF, USE_MPI=OFF, USE_NCCL=OFF, USE_NNPACK=OFF, USE_OPENMP=ON, USE_ROCM=OFF, 
+
+    TorchVision: 0.13.0+cu113
+    OpenCV: 4.7.0
+    MMEngine: 0.7.3
+
+Runtime environment:
+    cudnn_benchmark: True
+    mp_cfg: {'mp_start_method': 'fork', 'opencv_num_threads': 0}
+    dist_cfg: {'backend': 'nccl'}
+    seed: None
+    Distributed launcher: none
+    Distributed training: False
+    GPU number: 1
+------------------------------------------------------------
+
+2023/06/14 17:16:09 - mmengine - INFO - Config:
+norm_cfg = dict(type='BN', requires_grad=True)
+crop_size = (512, 512)
+data_preprocessor = dict(
+    type='SegDataPreProcessor',
+    size=(512, 512),
+    mean=[123.675, 116.28, 103.53],
+    std=[58.395, 57.12, 57.375],
+    bgr_to_rgb=True,
+    pad_val=0,
+    seg_pad_val=255)
+model = dict(
+    type='EncoderDecoder',
+    data_preprocessor=dict(
+        type='SegDataPreProcessor',
+        size=(512, 512),
+        mean=[123.675, 116.28, 103.53],
+        std=[58.395, 57.12, 57.375],
+        bgr_to_rgb=True,
+        pad_val=0,
+        seg_pad_val=255),
+    pretrained='open-mmlab://resnet50_v1c',
+    backbone=dict(
+        type='ResNetV1c',
+        depth=50,
+        num_stages=4,
+        out_indices=(0, 1, 2, 3),
+        dilations=(1, 1, 2, 4),
+        strides=(1, 2, 1, 1),
+        norm_cfg=dict(type='BN', requires_grad=True),
+        norm_eval=False,
+        style='pytorch',
+        contract_dilation=True),
+    decode_head=dict(
+        type='PSPHead',
+        in_channels=2048,
+        in_index=3,
+        channels=512,
+        pool_scales=(1, 2, 3, 6),
+        dropout_ratio=0.1,
+        num_classes=5,
+        norm_cfg=dict(type='BN', requires_grad=True),
+        align_corners=False,
+        loss_decode=dict(
+            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0)),
+    auxiliary_head=dict(
+        type='FCNHead',
+        in_channels=1024,
+        in_index=2,
+        channels=256,
+        num_convs=1,
+        concat_input=False,
+        dropout_ratio=0.1,
+        num_classes=5,
+        norm_cfg=dict(type='BN', requires_grad=True),
+        align_corners=False,
+        loss_decode=dict(
+            type='CrossEntropyLoss', use_sigmoid=False, loss_weight=0.4)),
+    init_cfg=dict(
+        type='Pretrained',
+        checkpoint=
+        'E:\\AIsecond\\second_mmseg\\mmsegmentation\\work_dirs\\PSPnet_Citrullus_finetune\\iter_4000.pth'
+    ),
+    train_cfg=dict(),
+    test_cfg=dict(mode='whole'))
+dataset_type = 'BaseSegDataset'
+metainfo = dict(
+    classes=('red', 'green', 'white', 'seed-black', 'seed-white'),
+    palette=[(220, 20, 60), (110, 50, 60), (220, 110, 20), (20, 60, 60),
+             (20, 110, 60)])
+data_root = 'E:/AIsecond/second_mmseg/mmsegmentation/data/Watermelon87_Semantic_Seg_Mask/'
+train_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='LoadAnnotations'),
+    dict(
+        type='RandomResize',
+        scale=(2048, 1024),
+        ratio_range=(0.5, 2.0),
+        keep_ratio=True),
+    dict(type='RandomCrop', crop_size=(512, 512), cat_max_ratio=0.75),
+    dict(type='RandomFlip', prob=0.5),
+    dict(type='PhotoMetricDistortion'),
+    dict(type='PackSegInputs')
+]
+test_pipeline = [
+    dict(type='LoadImageFromFile'),
+    dict(type='Resize', scale=(2048, 1024), keep_ratio=True),
+    dict(type='LoadAnnotations'),
+    dict(type='PackSegInputs')
+]
+img_ratios = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75]
+tta_pipeline = [
+    dict(type='LoadImageFromFile', backend_args=None),
+    dict(
+        type='TestTimeAug',
+        transforms=[[{
+            'type': 'Resize',
+            'scale_factor': 0.5,
+            'keep_ratio': True
+        }, {
+            'type': 'Resize',
+            'scale_factor': 0.75,
+            'keep_ratio': True
+        }, {
+            'type': 'Resize',
+            'scale_factor': 1.0,
+            'keep_ratio': True
+        }, {
+            'type': 'Resize',
+            'scale_factor': 1.25,
+            'keep_ratio': True
+        }, {
+            'type': 'Resize',
+            'scale_factor': 1.5,
+            'keep_ratio': True
+        }, {
+            'type': 'Resize',
+            'scale_factor': 1.75,
+            'keep_ratio': True
+        }],
+                    [{
+                        'type': 'RandomFlip',
+                        'prob': 0.0,
+                        'direction': 'horizontal'
+                    }, {
+                        'type': 'RandomFlip',
+                        'prob': 1.0,
+                        'direction': 'horizontal'
+                    }], [{
+                        'type': 'LoadAnnotations'
+                    }], [{
+                        'type': 'PackSegInputs'
+                    }]])
+]
+train_dataloader = dict(
+    batch_size=2,
+    num_workers=2,
+    persistent_workers=True,
+    sampler=dict(type='InfiniteSampler', shuffle=True),
+    dataset=dict(
+        type='BaseSegDataset',
+        data_root=
+        'E:/AIsecond/second_mmseg/mmsegmentation/data/Watermelon87_Semantic_Seg_Mask/',
+        metainfo=dict(
+            classes=('red', 'green', 'white', 'seed-black', 'seed-white'),
+            palette=[(220, 20, 60), (110, 50, 60), (220, 110, 20),
+                     (20, 60, 60), (20, 110, 60)]),
+        reduce_zero_label=True,
+        data_prefix=dict(
+            img_path='img_dir/train', seg_map_path='ann_dir/train'),
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='LoadAnnotations'),
+            dict(
+                type='RandomResize',
+                scale=(2048, 1024),
+                ratio_range=(0.5, 2.0),
+                keep_ratio=True),
+            dict(type='RandomCrop', crop_size=(512, 512), cat_max_ratio=0.75),
+            dict(type='RandomFlip', prob=0.5),
+            dict(type='PhotoMetricDistortion'),
+            dict(type='PackSegInputs')
+        ]))
+val_dataloader = dict(
+    batch_size=1,
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(type='DefaultSampler', shuffle=False),
+    dataset=dict(
+        type='BaseSegDataset',
+        metainfo=dict(
+            classes=('red', 'green', 'white', 'seed-black', 'seed-white'),
+            palette=[(220, 20, 60), (110, 50, 60), (220, 110, 20),
+                     (20, 60, 60), (20, 110, 60)]),
+        reduce_zero_label=True,
+        data_root=
+        'E:/AIsecond/second_mmseg/mmsegmentation/data/Watermelon87_Semantic_Seg_Mask/',
+        data_prefix=dict(img_path='img_dir/val', seg_map_path='ann_dir/val'),
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='Resize', scale=(2048, 1024), keep_ratio=True),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs')
+        ]))
+test_dataloader = dict(
+    batch_size=1,
+    num_workers=4,
+    persistent_workers=True,
+    sampler=dict(type='DefaultSampler', shuffle=False),
+    dataset=dict(
+        type='BaseSegDataset',
+        metainfo=dict(
+            classes=('red', 'green', 'white', 'seed-black', 'seed-white'),
+            palette=[(220, 20, 60), (110, 50, 60), (220, 110, 20),
+                     (20, 60, 60), (20, 110, 60)]),
+        reduce_zero_label=True,
+        data_root=
+        'E:/AIsecond/second_mmseg/mmsegmentation/data/Watermelon87_Semantic_Seg_Mask/',
+        data_prefix=dict(img_path='img_dir/val', seg_map_path='ann_dir/val'),
+        pipeline=[
+            dict(type='LoadImageFromFile'),
+            dict(type='Resize', scale=(2048, 1024), keep_ratio=True),
+            dict(type='LoadAnnotations'),
+            dict(type='PackSegInputs')
+        ]))
+val_evaluator = dict(type='IoUMetric', iou_metrics=['mIoU'])
+test_evaluator = dict(type='IoUMetric', iou_metrics=['mIoU'])
+default_scope = 'mmseg'
+env_cfg = dict(
+    cudnn_benchmark=True,
+    mp_cfg=dict(mp_start_method='fork', opencv_num_threads=0),
+    dist_cfg=dict(backend='nccl'))
+vis_backends = [dict(type='LocalVisBackend')]
+visualizer = dict(
+    type='SegLocalVisualizer',
+    vis_backends=[dict(type='LocalVisBackend')],
+    name='visualizer')
+log_processor = dict(by_epoch=False)
+log_level = 'INFO'
+load_from = None
+resume = False
+tta_model = dict(type='SegTTAModel')
+optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005)
+optim_wrapper = dict(
+    type='OptimWrapper',
+    optimizer=dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0005),
+    clip_grad=None)
+param_scheduler = [
+    dict(
+        type='PolyLR',
+        eta_min=0.0001,
+        power=0.9,
+        begin=0,
+        end=40000,
+        by_epoch=False)
+]
+train_cfg = dict(type='IterBasedTrainLoop', max_iters=40000, val_interval=400)
+val_cfg = dict(type='ValLoop')
+test_cfg = dict(type='TestLoop')
+default_hooks = dict(
+    timer=dict(type='IterTimerHook'),
+    logger=dict(type='LoggerHook', interval=50, log_metric_by_epoch=False),
+    param_scheduler=dict(type='ParamSchedulerHook'),
+    checkpoint=dict(
+        type='CheckpointHook',
+        by_epoch=False,
+        interval=400,
+        max_keep_ckpts=5,
+        save_best='auto'),
+    sampler_seed=dict(type='DistSamplerSeedHook'),
+    visualization=dict(type='SegVisualizationHook'))
+launcher = 'none'
+work_dir = './work_dirs\\PSPnet_Citrullus_finetune'
+
+2023/06/14 17:16:16 - mmengine - INFO - Distributed training is not used, all SyncBatchNorm (SyncBN) layers in the model will be automatically reverted to BatchNormXd layers if they are used.
+2023/06/14 17:16:16 - mmengine - INFO - Hooks will be executed in the following order:
+before_run:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+before_train:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_train_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) DistSamplerSeedHook                
+ -------------------- 
+before_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_train_iter:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train_epoch:
+(NORMAL      ) IterTimerHook                      
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_val_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_val_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_val_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_val_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+(LOW         ) ParamSchedulerHook                 
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+after_train:
+(VERY_LOW    ) CheckpointHook                     
+ -------------------- 
+before_test_epoch:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+before_test_iter:
+(NORMAL      ) IterTimerHook                      
+ -------------------- 
+after_test_iter:
+(NORMAL      ) IterTimerHook                      
+(NORMAL      ) SegVisualizationHook               
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_test_epoch:
+(VERY_HIGH   ) RuntimeInfoHook                    
+(NORMAL      ) IterTimerHook                      
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+after_run:
+(BELOW_NORMAL) LoggerHook                         
+ -------------------- 
+2023/06/14 17:16:26 - mmengine - WARNING - The prefix is not set in metric class IoUMetric.
+2023/06/14 17:16:32 - mmengine - INFO - load model from: open-mmlab://resnet50_v1c
+2023/06/14 17:16:32 - mmengine - INFO - Loads checkpoint by openmmlab backend from path: open-mmlab://resnet50_v1c
+2023/06/14 17:16:32 - mmengine - WARNING - The model and loaded state dict do not match exactly
+
+unexpected key in source state_dict: fc.weight, fc.bias
+
+2023/06/14 17:16:32 - mmengine - INFO - load model from: E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth
+2023/06/14 17:16:32 - mmengine - INFO - Loads checkpoint by local backend from path: E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth
+Name of parameter - Initialization information
+
+backbone.stem.0.weight - torch.Size([32, 3, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.stem.1.weight - torch.Size([32]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.stem.1.bias - torch.Size([32]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.stem.3.weight - torch.Size([32, 32, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.stem.4.weight - torch.Size([32]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.stem.4.bias - torch.Size([32]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.stem.6.weight - torch.Size([64, 32, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.stem.7.weight - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.stem.7.bias - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.conv1.weight - torch.Size([64, 64, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.downsample.0.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.downsample.1.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.0.downsample.1.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.conv1.weight - torch.Size([64, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.1.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.conv1.weight - torch.Size([64, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.bn1.weight - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.bn1.bias - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.conv2.weight - torch.Size([64, 64, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.bn2.weight - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.bn2.bias - torch.Size([64]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.conv3.weight - torch.Size([256, 64, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.bn3.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer1.2.bn3.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.conv1.weight - torch.Size([128, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.downsample.0.weight - torch.Size([512, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.downsample.1.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.0.downsample.1.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.1.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.2.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.conv1.weight - torch.Size([128, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.bn1.weight - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.bn1.bias - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.conv2.weight - torch.Size([128, 128, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.bn2.weight - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.bn2.bias - torch.Size([128]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.conv3.weight - torch.Size([512, 128, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.bn3.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer2.3.bn3.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.conv1.weight - torch.Size([256, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.downsample.0.weight - torch.Size([1024, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.downsample.1.weight - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.0.downsample.1.bias - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.1.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.2.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.3.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.4.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.conv1.weight - torch.Size([256, 1024, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.bn1.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.bn1.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.conv2.weight - torch.Size([256, 256, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.bn2.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.bn2.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.conv3.weight - torch.Size([1024, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.bn3.weight - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer3.5.bn3.bias - torch.Size([1024]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.conv1.weight - torch.Size([512, 1024, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.downsample.0.weight - torch.Size([2048, 1024, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.downsample.1.weight - torch.Size([2048]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.0.downsample.1.bias - torch.Size([2048]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.conv1.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.1.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.conv1.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.bn1.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.bn1.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.conv2.weight - torch.Size([512, 512, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.bn2.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.bn2.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.conv3.weight - torch.Size([2048, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.bn3.weight - torch.Size([2048]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+backbone.layer4.2.bn3.bias - torch.Size([2048]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.conv_seg.weight - torch.Size([5, 512, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.conv_seg.bias - torch.Size([5]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.0.1.conv.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.0.1.bn.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.0.1.bn.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.1.1.conv.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.1.1.bn.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.1.1.bn.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.2.1.conv.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.2.1.bn.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.2.1.bn.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.3.1.conv.weight - torch.Size([512, 2048, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.3.1.bn.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.psp_modules.3.1.bn.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.bottleneck.conv.weight - torch.Size([512, 4096, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.bottleneck.bn.weight - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+decode_head.bottleneck.bn.bias - torch.Size([512]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+auxiliary_head.conv_seg.weight - torch.Size([5, 256, 1, 1]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+auxiliary_head.conv_seg.bias - torch.Size([5]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+auxiliary_head.convs.0.conv.weight - torch.Size([256, 1024, 3, 3]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+auxiliary_head.convs.0.bn.weight - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+
+auxiliary_head.convs.0.bn.bias - torch.Size([256]): 
+PretrainedInit: load from E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\iter_4000.pth 
+2023/06/14 17:16:33 - mmengine - WARNING - "FileClient" will be deprecated in future. Please use io functions in https://mmengine.readthedocs.io/en/latest/api/fileio.html#file-io
+2023/06/14 17:16:33 - mmengine - WARNING - "HardDiskBackend" is the alias of "LocalBackend" and the former will be deprecated in future.
+2023/06/14 17:16:33 - mmengine - INFO - Checkpoints will be saved to E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune.
+2023/06/14 17:16:55 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 17:16:55 - mmengine - INFO - Iter(train) [   23/40000]  lr: 9.9951e-03  eta: 10:55:09  time: 0.7191  data_time: 0.0075  memory: 3518  loss: 0.4959  decode.loss_ce: 0.3588  decode.acc_seg: 92.3434  aux.loss_ce: 0.1370  aux.acc_seg: 91.4086
+2023/06/14 17:17:14 - mmengine - INFO - Iter(train) [   50/40000]  lr: 9.9891e-03  eta: 9:11:43  time: 0.6945  data_time: 0.0043  memory: 3518  loss: 0.4232  decode.loss_ce: 0.3139  decode.acc_seg: 91.5045  aux.loss_ce: 0.1094  aux.acc_seg: 93.4802
+2023/06/14 17:17:49 - mmengine - INFO - Iter(train) [  100/40000]  lr: 9.9779e-03  eta: 8:25:19  time: 0.6941  data_time: 0.0047  memory: 3518  loss: 0.2545  decode.loss_ce: 0.1890  decode.acc_seg: 88.5884  aux.loss_ce: 0.0654  aux.acc_seg: 94.1372
+2023/06/14 17:18:24 - mmengine - INFO - Iter(train) [  150/40000]  lr: 9.9668e-03  eta: 8:10:31  time: 0.6950  data_time: 0.0050  memory: 3518  loss: 0.2622  decode.loss_ce: 0.1919  decode.acc_seg: 97.5105  aux.loss_ce: 0.0703  aux.acc_seg: 97.0983
+2023/06/14 17:18:58 - mmengine - INFO - Iter(train) [  200/40000]  lr: 9.9557e-03  eta: 8:02:51  time: 0.6972  data_time: 0.0047  memory: 3518  loss: 0.2267  decode.loss_ce: 0.1559  decode.acc_seg: 92.5293  aux.loss_ce: 0.0708  aux.acc_seg: 93.9409
+2023/06/14 17:19:33 - mmengine - INFO - Iter(train) [  250/40000]  lr: 9.9445e-03  eta: 7:58:04  time: 0.6871  data_time: 0.0034  memory: 3518  loss: 0.2347  decode.loss_ce: 0.1688  decode.acc_seg: 87.6301  aux.loss_ce: 0.0659  aux.acc_seg: 92.3756
+2023/06/14 17:20:08 - mmengine - INFO - Iter(train) [  300/40000]  lr: 9.9334e-03  eta: 7:54:48  time: 0.7015  data_time: 0.0041  memory: 3518  loss: 0.2332  decode.loss_ce: 0.1717  decode.acc_seg: 94.6031  aux.loss_ce: 0.0615  aux.acc_seg: 94.5795
+2023/06/14 17:20:43 - mmengine - INFO - Iter(train) [  350/40000]  lr: 9.9222e-03  eta: 7:52:03  time: 0.6940  data_time: 0.0042  memory: 3518  loss: 0.2036  decode.loss_ce: 0.1421  decode.acc_seg: 96.8794  aux.loss_ce: 0.0616  aux.acc_seg: 96.8250
+2023/06/14 17:21:18 - mmengine - INFO - Iter(train) [  400/40000]  lr: 9.9111e-03  eta: 7:50:11  time: 0.6919  data_time: 0.0043  memory: 3518  loss: 0.1449  decode.loss_ce: 0.1062  decode.acc_seg: 93.8628  aux.loss_ce: 0.0387  aux.acc_seg: 94.8031
+2023/06/14 17:21:18 - mmengine - INFO - Saving checkpoint at 400 iterations
+2023/06/14 17:21:49 - mmengine - INFO - per class results:
+2023/06/14 17:21:49 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     |  93.9 | 98.49 |
+|   green    | 93.96 |  95.2 |
+|   white    | 78.57 |  85.3 |
+| seed-black | 59.02 | 70.28 |
+| seed-white |  3.78 |  3.78 |
++------------+-------+-------+
+2023/06/14 17:21:49 - mmengine - INFO - Iter(val) [11/11]    aAcc: 94.9200  mIoU: 65.8500  mAcc: 70.6100  data_time: 0.4250  time: 2.0255
+2023/06/14 17:21:54 - mmengine - INFO - The best checkpoint with 94.9200 aAcc at 400 iter is saved to best_aAcc_iter_400.pth.
+2023/06/14 17:22:29 - mmengine - INFO - Iter(train) [  450/40000]  lr: 9.8999e-03  eta: 7:56:59  time: 0.6945  data_time: 0.0038  memory: 3518  loss: 0.2018  decode.loss_ce: 0.1414  decode.acc_seg: 91.7439  aux.loss_ce: 0.0604  aux.acc_seg: 92.0277
+2023/06/14 17:23:04 - mmengine - INFO - Iter(train) [  500/40000]  lr: 9.8888e-03  eta: 7:54:34  time: 0.6978  data_time: 0.0039  memory: 3518  loss: 0.1435  decode.loss_ce: 0.0966  decode.acc_seg: 93.6689  aux.loss_ce: 0.0469  aux.acc_seg: 88.0757
+2023/06/14 17:23:39 - mmengine - INFO - Iter(train) [  550/40000]  lr: 9.8776e-03  eta: 7:52:24  time: 0.6920  data_time: 0.0036  memory: 3518  loss: 0.2255  decode.loss_ce: 0.1602  decode.acc_seg: 97.3342  aux.loss_ce: 0.0653  aux.acc_seg: 97.2921
+2023/06/14 17:24:14 - mmengine - INFO - Iter(train) [  600/40000]  lr: 9.8665e-03  eta: 7:51:09  time: 0.6959  data_time: 0.0045  memory: 3518  loss: 0.1305  decode.loss_ce: 0.0936  decode.acc_seg: 97.9310  aux.loss_ce: 0.0369  aux.acc_seg: 98.0862
+2023/06/14 17:24:49 - mmengine - INFO - Iter(train) [  650/40000]  lr: 9.8553e-03  eta: 7:49:43  time: 0.6993  data_time: 0.0050  memory: 3518  loss: 0.1484  decode.loss_ce: 0.1042  decode.acc_seg: 97.7193  aux.loss_ce: 0.0442  aux.acc_seg: 97.8363
+2023/06/14 17:25:24 - mmengine - INFO - Iter(train) [  700/40000]  lr: 9.8442e-03  eta: 7:48:15  time: 0.6914  data_time: 0.0038  memory: 3518  loss: 0.1577  decode.loss_ce: 0.1075  decode.acc_seg: 88.8567  aux.loss_ce: 0.0501  aux.acc_seg: 88.4012
+2023/06/14 17:25:59 - mmengine - INFO - Iter(train) [  750/40000]  lr: 9.8330e-03  eta: 7:46:54  time: 0.6918  data_time: 0.0040  memory: 3518  loss: 0.2003  decode.loss_ce: 0.1426  decode.acc_seg: 94.8522  aux.loss_ce: 0.0577  aux.acc_seg: 95.0317
+2023/06/14 17:26:34 - mmengine - INFO - Iter(train) [  800/40000]  lr: 9.8218e-03  eta: 7:45:27  time: 0.6920  data_time: 0.0039  memory: 3518  loss: 0.1376  decode.loss_ce: 0.0946  decode.acc_seg: 90.0859  aux.loss_ce: 0.0430  aux.acc_seg: 87.2153
+2023/06/14 17:26:34 - mmengine - INFO - Saving checkpoint at 800 iterations
+2023/06/14 17:26:48 - mmengine - INFO - per class results:
+2023/06/14 17:26:48 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 91.43 | 99.34 |
+|   green    | 92.99 | 94.68 |
+|   white    | 70.37 |  72.9 |
+| seed-black | 57.71 |  63.7 |
+| seed-white |  24.5 | 25.28 |
++------------+-------+-------+
+2023/06/14 17:26:48 - mmengine - INFO - Iter(val) [11/11]    aAcc: 93.3300  mIoU: 67.4000  mAcc: 71.1800  data_time: 0.0128  time: 0.5383
+2023/06/14 17:27:22 - mmengine - INFO - Iter(train) [  850/40000]  lr: 9.8107e-03  eta: 7:44:05  time: 0.6918  data_time: 0.0037  memory: 3518  loss: 0.1721  decode.loss_ce: 0.1215  decode.acc_seg: 98.6179  aux.loss_ce: 0.0506  aux.acc_seg: 98.4454
+2023/06/14 17:27:57 - mmengine - INFO - Iter(train) [  900/40000]  lr: 9.7995e-03  eta: 7:42:48  time: 0.6935  data_time: 0.0043  memory: 3518  loss: 0.0924  decode.loss_ce: 0.0657  decode.acc_seg: 93.2719  aux.loss_ce: 0.0267  aux.acc_seg: 93.8341
+2023/06/14 17:28:32 - mmengine - INFO - Iter(train) [  950/40000]  lr: 9.7884e-03  eta: 7:41:42  time: 0.6955  data_time: 0.0044  memory: 3518  loss: 0.1151  decode.loss_ce: 0.0798  decode.acc_seg: 93.3376  aux.loss_ce: 0.0353  aux.acc_seg: 93.6795
+2023/06/14 17:29:07 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 17:29:07 - mmengine - INFO - Iter(train) [ 1000/40000]  lr: 9.7772e-03  eta: 7:40:50  time: 0.7019  data_time: 0.0060  memory: 3518  loss: 0.0869  decode.loss_ce: 0.0597  decode.acc_seg: 96.4034  aux.loss_ce: 0.0272  aux.acc_seg: 97.0415
+2023/06/14 17:29:42 - mmengine - INFO - Iter(train) [ 1050/40000]  lr: 9.7660e-03  eta: 7:39:49  time: 0.6930  data_time: 0.0039  memory: 3518  loss: 0.1501  decode.loss_ce: 0.1051  decode.acc_seg: 96.0139  aux.loss_ce: 0.0450  aux.acc_seg: 95.2466
+2023/06/14 17:30:16 - mmengine - INFO - Iter(train) [ 1100/40000]  lr: 9.7549e-03  eta: 7:38:46  time: 0.6942  data_time: 0.0042  memory: 3518  loss: 0.1291  decode.loss_ce: 0.0906  decode.acc_seg: 94.8968  aux.loss_ce: 0.0384  aux.acc_seg: 95.0109
+2023/06/14 17:30:51 - mmengine - INFO - Iter(train) [ 1150/40000]  lr: 9.7437e-03  eta: 7:37:58  time: 0.7031  data_time: 0.0060  memory: 3518  loss: 0.1080  decode.loss_ce: 0.0748  decode.acc_seg: 94.0376  aux.loss_ce: 0.0332  aux.acc_seg: 95.4939
+2023/06/14 17:31:27 - mmengine - INFO - Iter(train) [ 1200/40000]  lr: 9.7325e-03  eta: 7:37:25  time: 0.7030  data_time: 0.0065  memory: 3518  loss: 0.1363  decode.loss_ce: 0.0970  decode.acc_seg: 95.4888  aux.loss_ce: 0.0393  aux.acc_seg: 95.3938
+2023/06/14 17:31:27 - mmengine - INFO - Saving checkpoint at 1200 iterations
+2023/06/14 17:31:46 - mmengine - INFO - per class results:
+2023/06/14 17:31:46 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 95.55 | 98.57 |
+|   green    | 92.45 | 94.22 |
+|   white    | 82.51 | 89.99 |
+| seed-black | 66.61 | 73.08 |
+| seed-white | 39.33 | 51.43 |
++------------+-------+-------+
+2023/06/14 17:31:46 - mmengine - INFO - Iter(val) [11/11]    aAcc: 95.8500  mIoU: 75.2900  mAcc: 81.4600  data_time: 0.0142  time: 0.5489
+2023/06/14 17:31:46 - mmengine - INFO - The previous best checkpoint E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\best_aAcc_iter_400.pth is removed
+2023/06/14 17:31:52 - mmengine - INFO - The best checkpoint with 95.8500 aAcc at 1200 iter is saved to best_aAcc_iter_1200.pth.
+2023/06/14 17:32:28 - mmengine - INFO - Iter(train) [ 1250/40000]  lr: 9.7213e-03  eta: 7:40:14  time: 0.7052  data_time: 0.0046  memory: 3518  loss: 0.1025  decode.loss_ce: 0.0745  decode.acc_seg: 95.3053  aux.loss_ce: 0.0280  aux.acc_seg: 93.9668
+2023/06/14 17:33:03 - mmengine - INFO - Iter(train) [ 1300/40000]  lr: 9.7102e-03  eta: 7:39:18  time: 0.6989  data_time: 0.0039  memory: 3518  loss: 0.1399  decode.loss_ce: 0.0933  decode.acc_seg: 97.7180  aux.loss_ce: 0.0465  aux.acc_seg: 97.6990
+2023/06/14 17:33:38 - mmengine - INFO - Iter(train) [ 1350/40000]  lr: 9.6990e-03  eta: 7:38:25  time: 0.7077  data_time: 0.0058  memory: 3518  loss: 0.3668  decode.loss_ce: 0.2784  decode.acc_seg: 92.3898  aux.loss_ce: 0.0885  aux.acc_seg: 92.9310
+2023/06/14 17:34:13 - mmengine - INFO - Iter(train) [ 1400/40000]  lr: 9.6878e-03  eta: 7:37:39  time: 0.7108  data_time: 0.0043  memory: 3518  loss: 0.2000  decode.loss_ce: 0.1365  decode.acc_seg: 95.2919  aux.loss_ce: 0.0634  aux.acc_seg: 95.8680
+2023/06/14 17:34:49 - mmengine - INFO - Iter(train) [ 1450/40000]  lr: 9.6766e-03  eta: 7:37:11  time: 0.7142  data_time: 0.0065  memory: 3518  loss: 0.1878  decode.loss_ce: 0.1321  decode.acc_seg: 96.8257  aux.loss_ce: 0.0557  aux.acc_seg: 96.7089
+2023/06/14 17:35:24 - mmengine - INFO - Iter(train) [ 1500/40000]  lr: 9.6655e-03  eta: 7:36:32  time: 0.7004  data_time: 0.0041  memory: 3518  loss: 0.1242  decode.loss_ce: 0.0829  decode.acc_seg: 97.9965  aux.loss_ce: 0.0413  aux.acc_seg: 97.8001
+2023/06/14 17:35:59 - mmengine - INFO - Iter(train) [ 1550/40000]  lr: 9.6543e-03  eta: 7:35:44  time: 0.7058  data_time: 0.0043  memory: 3518  loss: 0.1023  decode.loss_ce: 0.0686  decode.acc_seg: 94.9246  aux.loss_ce: 0.0336  aux.acc_seg: 93.0377
+2023/06/14 17:36:34 - mmengine - INFO - Iter(train) [ 1600/40000]  lr: 9.6431e-03  eta: 7:34:57  time: 0.6952  data_time: 0.0047  memory: 3518  loss: 0.1293  decode.loss_ce: 0.0903  decode.acc_seg: 95.6527  aux.loss_ce: 0.0390  aux.acc_seg: 95.4787
+2023/06/14 17:36:34 - mmengine - INFO - Saving checkpoint at 1600 iterations
+2023/06/14 17:36:49 - mmengine - INFO - per class results:
+2023/06/14 17:36:49 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 94.63 | 98.55 |
+|   green    |  95.8 | 97.74 |
+|   white    | 80.57 | 85.48 |
+| seed-black | 66.37 | 74.13 |
+| seed-white | 42.51 |  52.9 |
++------------+-------+-------+
+2023/06/14 17:36:49 - mmengine - INFO - Iter(val) [11/11]    aAcc: 95.6900  mIoU: 75.9700  mAcc: 81.7600  data_time: 0.0128  time: 0.5357
+2023/06/14 17:37:24 - mmengine - INFO - Iter(train) [ 1650/40000]  lr: 9.6319e-03  eta: 7:34:09  time: 0.6990  data_time: 0.0045  memory: 3518  loss: 0.1384  decode.loss_ce: 0.0943  decode.acc_seg: 96.7625  aux.loss_ce: 0.0441  aux.acc_seg: 97.1131
+2023/06/14 17:37:59 - mmengine - INFO - Iter(train) [ 1700/40000]  lr: 9.6207e-03  eta: 7:33:15  time: 0.6926  data_time: 0.0037  memory: 3518  loss: 0.1137  decode.loss_ce: 0.0771  decode.acc_seg: 97.7737  aux.loss_ce: 0.0366  aux.acc_seg: 97.3361
+2023/06/14 17:38:34 - mmengine - INFO - Iter(train) [ 1750/40000]  lr: 9.6095e-03  eta: 7:32:28  time: 0.7037  data_time: 0.0058  memory: 3518  loss: 0.1316  decode.loss_ce: 0.0928  decode.acc_seg: 91.0190  aux.loss_ce: 0.0388  aux.acc_seg: 87.2319
+2023/06/14 17:39:09 - mmengine - INFO - Iter(train) [ 1800/40000]  lr: 9.5983e-03  eta: 7:31:51  time: 0.7069  data_time: 0.0061  memory: 3518  loss: 0.1109  decode.loss_ce: 0.0756  decode.acc_seg: 94.8244  aux.loss_ce: 0.0353  aux.acc_seg: 94.8268
+2023/06/14 17:39:44 - mmengine - INFO - Iter(train) [ 1850/40000]  lr: 9.5872e-03  eta: 7:31:05  time: 0.7002  data_time: 0.0037  memory: 3518  loss: 0.1198  decode.loss_ce: 0.0845  decode.acc_seg: 97.8285  aux.loss_ce: 0.0353  aux.acc_seg: 97.4590
+2023/06/14 17:40:19 - mmengine - INFO - Iter(train) [ 1900/40000]  lr: 9.5760e-03  eta: 7:30:15  time: 0.6882  data_time: 0.0047  memory: 3518  loss: 0.1672  decode.loss_ce: 0.1159  decode.acc_seg: 97.0302  aux.loss_ce: 0.0513  aux.acc_seg: 96.2031
+2023/06/14 17:40:53 - mmengine - INFO - Iter(train) [ 1950/40000]  lr: 9.5648e-03  eta: 7:29:20  time: 0.6939  data_time: 0.0039  memory: 3518  loss: 0.1439  decode.loss_ce: 0.0979  decode.acc_seg: 92.8960  aux.loss_ce: 0.0460  aux.acc_seg: 93.0792
+2023/06/14 17:41:28 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 17:41:28 - mmengine - INFO - Iter(train) [ 2000/40000]  lr: 9.5536e-03  eta: 7:28:31  time: 0.6954  data_time: 0.0044  memory: 3518  loss: 0.1816  decode.loss_ce: 0.1261  decode.acc_seg: 90.2923  aux.loss_ce: 0.0555  aux.acc_seg: 90.8004
+2023/06/14 17:41:28 - mmengine - INFO - Saving checkpoint at 2000 iterations
+2023/06/14 17:41:43 - mmengine - INFO - per class results:
+2023/06/14 17:41:43 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 94.67 | 98.67 |
+|   green    | 94.25 | 95.95 |
+|   white    | 80.61 |  86.6 |
+| seed-black | 70.87 | 79.12 |
+| seed-white | 11.39 | 11.77 |
++------------+-------+-------+
+2023/06/14 17:41:43 - mmengine - INFO - Iter(val) [11/11]    aAcc: 95.5400  mIoU: 70.3600  mAcc: 74.4200  data_time: 0.0133  time: 0.5434
+2023/06/14 17:42:19 - mmengine - INFO - Iter(train) [ 2050/40000]  lr: 9.5424e-03  eta: 7:27:58  time: 0.7044  data_time: 0.0040  memory: 3518  loss: 0.1097  decode.loss_ce: 0.0789  decode.acc_seg: 94.9573  aux.loss_ce: 0.0308  aux.acc_seg: 95.9165
+2023/06/14 17:42:54 - mmengine - INFO - Iter(train) [ 2100/40000]  lr: 9.5312e-03  eta: 7:27:15  time: 0.7017  data_time: 0.0033  memory: 3518  loss: 0.1828  decode.loss_ce: 0.1295  decode.acc_seg: 91.1903  aux.loss_ce: 0.0533  aux.acc_seg: 88.3469
+2023/06/14 17:43:29 - mmengine - INFO - Iter(train) [ 2150/40000]  lr: 9.5200e-03  eta: 7:26:29  time: 0.6929  data_time: 0.0037  memory: 3518  loss: 0.1749  decode.loss_ce: 0.1185  decode.acc_seg: 96.0748  aux.loss_ce: 0.0564  aux.acc_seg: 96.2096
+2023/06/14 17:44:04 - mmengine - INFO - Iter(train) [ 2200/40000]  lr: 9.5088e-03  eta: 7:25:46  time: 0.7010  data_time: 0.0036  memory: 3518  loss: 0.0808  decode.loss_ce: 0.0559  decode.acc_seg: 94.2735  aux.loss_ce: 0.0250  aux.acc_seg: 94.6816
+2023/06/14 17:44:39 - mmengine - INFO - Iter(train) [ 2250/40000]  lr: 9.4976e-03  eta: 7:25:02  time: 0.6954  data_time: 0.0047  memory: 3518  loss: 0.0981  decode.loss_ce: 0.0657  decode.acc_seg: 94.4822  aux.loss_ce: 0.0324  aux.acc_seg: 92.4591
+2023/06/14 17:45:13 - mmengine - INFO - Iter(train) [ 2300/40000]  lr: 9.4864e-03  eta: 7:24:16  time: 0.6922  data_time: 0.0037  memory: 3518  loss: 0.1203  decode.loss_ce: 0.0842  decode.acc_seg: 94.6249  aux.loss_ce: 0.0361  aux.acc_seg: 94.0555
+2023/06/14 17:45:48 - mmengine - INFO - Iter(train) [ 2350/40000]  lr: 9.4752e-03  eta: 7:23:35  time: 0.6919  data_time: 0.0039  memory: 3518  loss: 0.1306  decode.loss_ce: 0.0876  decode.acc_seg: 97.5091  aux.loss_ce: 0.0430  aux.acc_seg: 96.7477
+2023/06/14 17:46:23 - mmengine - INFO - Iter(train) [ 2400/40000]  lr: 9.4640e-03  eta: 7:22:44  time: 0.6841  data_time: 0.0038  memory: 3518  loss: 0.1876  decode.loss_ce: 0.1342  decode.acc_seg: 87.6206  aux.loss_ce: 0.0534  aux.acc_seg: 88.1942
+2023/06/14 17:46:23 - mmengine - INFO - Saving checkpoint at 2400 iterations
+2023/06/14 17:46:37 - mmengine - INFO - per class results:
+2023/06/14 17:46:37 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 94.53 | 98.85 |
+|   green    | 95.78 | 96.74 |
+|   white    | 80.32 | 84.73 |
+| seed-black | 67.07 | 80.51 |
+| seed-white | 32.79 | 37.05 |
++------------+-------+-------+
+2023/06/14 17:46:37 - mmengine - INFO - Iter(val) [11/11]    aAcc: 95.6100  mIoU: 74.1000  mAcc: 79.5800  data_time: 0.0104  time: 0.5194
+2023/06/14 17:47:11 - mmengine - INFO - Iter(train) [ 2450/40000]  lr: 9.4528e-03  eta: 7:21:51  time: 0.6841  data_time: 0.0038  memory: 3518  loss: 0.1465  decode.loss_ce: 0.1030  decode.acc_seg: 95.0070  aux.loss_ce: 0.0435  aux.acc_seg: 94.9523
+2023/06/14 17:47:45 - mmengine - INFO - Iter(train) [ 2500/40000]  lr: 9.4416e-03  eta: 7:21:00  time: 0.6846  data_time: 0.0038  memory: 3518  loss: 0.1013  decode.loss_ce: 0.0694  decode.acc_seg: 96.7092  aux.loss_ce: 0.0319  aux.acc_seg: 96.5521
+2023/06/14 17:48:19 - mmengine - INFO - Iter(train) [ 2550/40000]  lr: 9.4303e-03  eta: 7:20:09  time: 0.6861  data_time: 0.0041  memory: 3518  loss: 0.0863  decode.loss_ce: 0.0596  decode.acc_seg: 97.2022  aux.loss_ce: 0.0268  aux.acc_seg: 96.8858
+2023/06/14 17:48:54 - mmengine - INFO - Iter(train) [ 2600/40000]  lr: 9.4191e-03  eta: 7:19:22  time: 0.6898  data_time: 0.0053  memory: 3518  loss: 0.0785  decode.loss_ce: 0.0547  decode.acc_seg: 96.6881  aux.loss_ce: 0.0238  aux.acc_seg: 97.1014
+2023/06/14 17:49:28 - mmengine - INFO - Iter(train) [ 2650/40000]  lr: 9.4079e-03  eta: 7:18:35  time: 0.6838  data_time: 0.0036  memory: 3518  loss: 0.1149  decode.loss_ce: 0.0820  decode.acc_seg: 97.0746  aux.loss_ce: 0.0329  aux.acc_seg: 93.1454
+2023/06/14 17:50:03 - mmengine - INFO - Iter(train) [ 2700/40000]  lr: 9.3967e-03  eta: 7:17:51  time: 0.7012  data_time: 0.0037  memory: 3518  loss: 0.1297  decode.loss_ce: 0.0941  decode.acc_seg: 92.3356  aux.loss_ce: 0.0356  aux.acc_seg: 92.9156
+2023/06/14 17:50:38 - mmengine - INFO - Iter(train) [ 2750/40000]  lr: 9.3855e-03  eta: 7:17:15  time: 0.6934  data_time: 0.0035  memory: 3518  loss: 0.1152  decode.loss_ce: 0.0809  decode.acc_seg: 95.8685  aux.loss_ce: 0.0343  aux.acc_seg: 96.3167
+2023/06/14 17:51:13 - mmengine - INFO - Iter(train) [ 2800/40000]  lr: 9.3743e-03  eta: 7:16:37  time: 0.6984  data_time: 0.0037  memory: 3518  loss: 0.0981  decode.loss_ce: 0.0681  decode.acc_seg: 90.2443  aux.loss_ce: 0.0300  aux.acc_seg: 89.7591
+2023/06/14 17:51:13 - mmengine - INFO - Saving checkpoint at 2800 iterations
+2023/06/14 17:51:27 - mmengine - INFO - per class results:
+2023/06/14 17:51:27 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 95.44 |  98.8 |
+|   green    |  96.0 | 97.99 |
+|   white    | 84.03 | 88.24 |
+| seed-black | 69.15 | 81.09 |
+| seed-white | 17.72 | 17.88 |
++------------+-------+-------+
+2023/06/14 17:51:27 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.2900  mIoU: 72.4700  mAcc: 76.8000  data_time: 0.0108  time: 0.5200
+2023/06/14 17:51:27 - mmengine - INFO - The previous best checkpoint E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\best_aAcc_iter_1200.pth is removed
+2023/06/14 17:51:34 - mmengine - INFO - The best checkpoint with 96.2900 aAcc at 2800 iter is saved to best_aAcc_iter_2800.pth.
+2023/06/14 17:52:10 - mmengine - INFO - Iter(train) [ 2850/40000]  lr: 9.3630e-03  eta: 7:17:33  time: 0.6927  data_time: 0.0038  memory: 3518  loss: 0.0874  decode.loss_ce: 0.0603  decode.acc_seg: 95.5708  aux.loss_ce: 0.0271  aux.acc_seg: 95.7580
+2023/06/14 17:52:46 - mmengine - INFO - Iter(train) [ 2900/40000]  lr: 9.3518e-03  eta: 7:17:14  time: 0.7208  data_time: 0.0050  memory: 3518  loss: 0.1135  decode.loss_ce: 0.0792  decode.acc_seg: 93.0138  aux.loss_ce: 0.0343  aux.acc_seg: 92.4402
+2023/06/14 17:53:22 - mmengine - INFO - Iter(train) [ 2950/40000]  lr: 9.3406e-03  eta: 7:16:43  time: 0.7215  data_time: 0.0043  memory: 3518  loss: 0.1209  decode.loss_ce: 0.0817  decode.acc_seg: 96.8406  aux.loss_ce: 0.0392  aux.acc_seg: 96.4066
+2023/06/14 17:53:57 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 17:53:57 - mmengine - INFO - Iter(train) [ 3000/40000]  lr: 9.3294e-03  eta: 7:16:07  time: 0.7175  data_time: 0.0048  memory: 3518  loss: 0.0923  decode.loss_ce: 0.0630  decode.acc_seg: 96.0732  aux.loss_ce: 0.0292  aux.acc_seg: 96.1745
+2023/06/14 17:54:33 - mmengine - INFO - Iter(train) [ 3050/40000]  lr: 9.3182e-03  eta: 7:15:40  time: 0.7527  data_time: 0.0070  memory: 3518  loss: 0.0929  decode.loss_ce: 0.0632  decode.acc_seg: 97.3277  aux.loss_ce: 0.0297  aux.acc_seg: 96.4063
+2023/06/14 17:55:10 - mmengine - INFO - Iter(train) [ 3100/40000]  lr: 9.3069e-03  eta: 7:15:26  time: 0.7286  data_time: 0.0047  memory: 3518  loss: 0.1038  decode.loss_ce: 0.0706  decode.acc_seg: 93.8609  aux.loss_ce: 0.0333  aux.acc_seg: 93.8380
+2023/06/14 17:55:46 - mmengine - INFO - Iter(train) [ 3150/40000]  lr: 9.2957e-03  eta: 7:14:52  time: 0.7087  data_time: 0.0046  memory: 3518  loss: 0.2276  decode.loss_ce: 0.1686  decode.acc_seg: 89.6335  aux.loss_ce: 0.0590  aux.acc_seg: 88.8810
+2023/06/14 17:56:22 - mmengine - INFO - Iter(train) [ 3200/40000]  lr: 9.2845e-03  eta: 7:14:28  time: 0.7391  data_time: 0.0086  memory: 3518  loss: 0.1451  decode.loss_ce: 0.1033  decode.acc_seg: 97.7201  aux.loss_ce: 0.0417  aux.acc_seg: 97.9376
+2023/06/14 17:56:22 - mmengine - INFO - Saving checkpoint at 3200 iterations
+2023/06/14 17:56:39 - mmengine - INFO - per class results:
+2023/06/14 17:56:39 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 95.17 | 99.16 |
+|   green    | 94.76 | 95.94 |
+|   white    | 82.86 | 87.84 |
+| seed-black | 64.08 | 69.15 |
+| seed-white | 17.36 | 17.72 |
++------------+-------+-------+
+2023/06/14 17:56:39 - mmengine - INFO - Iter(val) [11/11]    aAcc: 95.9500  mIoU: 70.8500  mAcc: 73.9600  data_time: 0.0132  time: 0.5468
+2023/06/14 17:57:16 - mmengine - INFO - Iter(train) [ 3250/40000]  lr: 9.2732e-03  eta: 7:14:02  time: 0.7265  data_time: 0.0054  memory: 3518  loss: 0.1296  decode.loss_ce: 0.0879  decode.acc_seg: 97.2124  aux.loss_ce: 0.0417  aux.acc_seg: 97.4586
+2023/06/14 17:57:51 - mmengine - INFO - Iter(train) [ 3300/40000]  lr: 9.2620e-03  eta: 7:13:32  time: 0.7115  data_time: 0.0039  memory: 3518  loss: 0.1173  decode.loss_ce: 0.0809  decode.acc_seg: 97.6453  aux.loss_ce: 0.0364  aux.acc_seg: 97.5643
+2023/06/14 17:58:27 - mmengine - INFO - Iter(train) [ 3350/40000]  lr: 9.2508e-03  eta: 7:12:59  time: 0.7174  data_time: 0.0052  memory: 3518  loss: 0.1119  decode.loss_ce: 0.0771  decode.acc_seg: 96.8048  aux.loss_ce: 0.0347  aux.acc_seg: 97.1056
+2023/06/14 17:59:03 - mmengine - INFO - Iter(train) [ 3400/40000]  lr: 9.2395e-03  eta: 7:12:27  time: 0.7260  data_time: 0.0066  memory: 3518  loss: 0.0874  decode.loss_ce: 0.0614  decode.acc_seg: 95.5104  aux.loss_ce: 0.0261  aux.acc_seg: 96.3528
+2023/06/14 17:59:39 - mmengine - INFO - Iter(train) [ 3450/40000]  lr: 9.2283e-03  eta: 7:11:55  time: 0.6909  data_time: 0.0057  memory: 3518  loss: 0.1095  decode.loss_ce: 0.0750  decode.acc_seg: 98.6268  aux.loss_ce: 0.0345  aux.acc_seg: 98.3988
+2023/06/14 18:00:14 - mmengine - INFO - Iter(train) [ 3500/40000]  lr: 9.2171e-03  eta: 7:11:23  time: 0.6863  data_time: 0.0035  memory: 3518  loss: 0.0857  decode.loss_ce: 0.0592  decode.acc_seg: 97.0341  aux.loss_ce: 0.0265  aux.acc_seg: 96.8121
+2023/06/14 18:00:50 - mmengine - INFO - Iter(train) [ 3550/40000]  lr: 9.2058e-03  eta: 7:10:50  time: 0.7176  data_time: 0.0053  memory: 3518  loss: 0.1162  decode.loss_ce: 0.0817  decode.acc_seg: 94.7636  aux.loss_ce: 0.0345  aux.acc_seg: 93.3848
+2023/06/14 18:01:25 - mmengine - INFO - Iter(train) [ 3600/40000]  lr: 9.1946e-03  eta: 7:10:10  time: 0.6917  data_time: 0.0035  memory: 3518  loss: 0.0851  decode.loss_ce: 0.0598  decode.acc_seg: 95.4253  aux.loss_ce: 0.0253  aux.acc_seg: 94.3376
+2023/06/14 18:01:25 - mmengine - INFO - Saving checkpoint at 3600 iterations
+2023/06/14 18:01:40 - mmengine - INFO - per class results:
+2023/06/14 18:01:40 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     |  96.7 | 98.53 |
+|   green    | 96.57 | 97.76 |
+|   white    | 89.53 | 95.48 |
+| seed-black |  68.7 | 73.67 |
+| seed-white |  44.1 | 48.29 |
++------------+-------+-------+
+2023/06/14 18:01:40 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.3200  mIoU: 79.1200  mAcc: 82.7400  data_time: 0.0152  time: 0.5454
+2023/06/14 18:01:40 - mmengine - INFO - The previous best checkpoint E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\best_aAcc_iter_2800.pth is removed
+2023/06/14 18:01:48 - mmengine - INFO - The best checkpoint with 97.3200 aAcc at 3600 iter is saved to best_aAcc_iter_3600.pth.
+2023/06/14 18:02:26 - mmengine - INFO - Iter(train) [ 3650/40000]  lr: 9.1833e-03  eta: 7:11:14  time: 0.7305  data_time: 0.0067  memory: 3518  loss: 0.0851  decode.loss_ce: 0.0602  decode.acc_seg: 93.1369  aux.loss_ce: 0.0248  aux.acc_seg: 93.5200
+2023/06/14 18:03:03 - mmengine - INFO - Iter(train) [ 3700/40000]  lr: 9.1721e-03  eta: 7:10:54  time: 0.7125  data_time: 0.0065  memory: 3518  loss: 0.0902  decode.loss_ce: 0.0638  decode.acc_seg: 95.0503  aux.loss_ce: 0.0264  aux.acc_seg: 94.7810
+2023/06/14 18:03:38 - mmengine - INFO - Iter(train) [ 3750/40000]  lr: 9.1608e-03  eta: 7:10:16  time: 0.7075  data_time: 0.0043  memory: 3518  loss: 0.0807  decode.loss_ce: 0.0554  decode.acc_seg: 97.3161  aux.loss_ce: 0.0254  aux.acc_seg: 96.9860
+2023/06/14 18:04:13 - mmengine - INFO - Iter(train) [ 3800/40000]  lr: 9.1496e-03  eta: 7:09:36  time: 0.6938  data_time: 0.0055  memory: 3518  loss: 0.0740  decode.loss_ce: 0.0516  decode.acc_seg: 95.0368  aux.loss_ce: 0.0224  aux.acc_seg: 94.8083
+2023/06/14 18:04:49 - mmengine - INFO - Iter(train) [ 3850/40000]  lr: 9.1383e-03  eta: 7:08:57  time: 0.7169  data_time: 0.0052  memory: 3518  loss: 0.1011  decode.loss_ce: 0.0705  decode.acc_seg: 97.4666  aux.loss_ce: 0.0306  aux.acc_seg: 96.4903
+2023/06/14 18:05:23 - mmengine - INFO - Iter(train) [ 3900/40000]  lr: 9.1271e-03  eta: 7:08:13  time: 0.7073  data_time: 0.0047  memory: 3518  loss: 0.0759  decode.loss_ce: 0.0529  decode.acc_seg: 95.1429  aux.loss_ce: 0.0230  aux.acc_seg: 94.6716
+2023/06/14 18:05:59 - mmengine - INFO - Iter(train) [ 3950/40000]  lr: 9.1158e-03  eta: 7:07:36  time: 0.7080  data_time: 0.0045  memory: 3518  loss: 0.0774  decode.loss_ce: 0.0546  decode.acc_seg: 97.7146  aux.loss_ce: 0.0228  aux.acc_seg: 97.8843
+2023/06/14 18:06:33 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 18:06:33 - mmengine - INFO - Iter(train) [ 4000/40000]  lr: 9.1046e-03  eta: 7:06:48  time: 0.6847  data_time: 0.0036  memory: 3518  loss: 0.0632  decode.loss_ce: 0.0442  decode.acc_seg: 95.3657  aux.loss_ce: 0.0190  aux.acc_seg: 95.6721
+2023/06/14 18:06:33 - mmengine - INFO - Saving checkpoint at 4000 iterations
+2023/06/14 18:06:47 - mmengine - INFO - per class results:
+2023/06/14 18:06:47 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 95.57 | 99.46 |
+|   green    | 95.78 | 97.81 |
+|   white    | 83.52 | 85.77 |
+| seed-black | 72.19 | 81.21 |
+| seed-white | 35.71 | 37.03 |
++------------+-------+-------+
+2023/06/14 18:06:47 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.3700  mIoU: 76.5500  mAcc: 80.2500  data_time: 0.0130  time: 0.5260
+2023/06/14 18:07:22 - mmengine - INFO - Iter(train) [ 4050/40000]  lr: 9.0933e-03  eta: 7:06:07  time: 0.6951  data_time: 0.0034  memory: 3518  loss: 0.0779  decode.loss_ce: 0.0528  decode.acc_seg: 97.5008  aux.loss_ce: 0.0252  aux.acc_seg: 97.4596
+2023/06/14 18:07:57 - mmengine - INFO - Iter(train) [ 4100/40000]  lr: 9.0821e-03  eta: 7:05:26  time: 0.6966  data_time: 0.0041  memory: 3518  loss: 0.0856  decode.loss_ce: 0.0586  decode.acc_seg: 98.7535  aux.loss_ce: 0.0270  aux.acc_seg: 98.6985
+2023/06/14 18:08:31 - mmengine - INFO - Iter(train) [ 4150/40000]  lr: 9.0708e-03  eta: 7:04:40  time: 0.6900  data_time: 0.0051  memory: 3518  loss: 0.0897  decode.loss_ce: 0.0588  decode.acc_seg: 96.1510  aux.loss_ce: 0.0309  aux.acc_seg: 95.6517
+2023/06/14 18:09:07 - mmengine - INFO - Iter(train) [ 4200/40000]  lr: 9.0595e-03  eta: 7:04:04  time: 0.7161  data_time: 0.0059  memory: 3518  loss: 0.0912  decode.loss_ce: 0.0645  decode.acc_seg: 96.0964  aux.loss_ce: 0.0266  aux.acc_seg: 95.6060
+2023/06/14 18:09:42 - mmengine - INFO - Iter(train) [ 4250/40000]  lr: 9.0483e-03  eta: 7:03:29  time: 0.7020  data_time: 0.0037  memory: 3518  loss: 0.0826  decode.loss_ce: 0.0580  decode.acc_seg: 97.9819  aux.loss_ce: 0.0246  aux.acc_seg: 97.9387
+2023/06/14 18:10:18 - mmengine - INFO - Iter(train) [ 4300/40000]  lr: 9.0370e-03  eta: 7:02:53  time: 0.6971  data_time: 0.0046  memory: 3518  loss: 0.1712  decode.loss_ce: 0.1156  decode.acc_seg: 98.1974  aux.loss_ce: 0.0556  aux.acc_seg: 95.7068
+2023/06/14 18:10:53 - mmengine - INFO - Iter(train) [ 4350/40000]  lr: 9.0257e-03  eta: 7:02:11  time: 0.6972  data_time: 0.0034  memory: 3518  loss: 0.1395  decode.loss_ce: 0.0931  decode.acc_seg: 96.2725  aux.loss_ce: 0.0464  aux.acc_seg: 95.9757
+2023/06/14 18:11:28 - mmengine - INFO - Iter(train) [ 4400/40000]  lr: 9.0145e-03  eta: 7:01:34  time: 0.7081  data_time: 0.0045  memory: 3518  loss: 0.0867  decode.loss_ce: 0.0617  decode.acc_seg: 96.9563  aux.loss_ce: 0.0250  aux.acc_seg: 97.2676
+2023/06/14 18:11:28 - mmengine - INFO - Saving checkpoint at 4400 iterations
+2023/06/14 18:11:43 - mmengine - INFO - per class results:
+2023/06/14 18:11:43 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.87 | 98.64 |
+|   green    | 95.64 | 96.98 |
+|   white    | 88.69 |  94.8 |
+| seed-black | 71.48 | 80.58 |
+| seed-white |  42.7 | 45.44 |
++------------+-------+-------+
+2023/06/14 18:11:43 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.2300  mIoU: 79.0800  mAcc: 83.2900  data_time: 0.0129  time: 0.5537
+2023/06/14 18:12:21 - mmengine - INFO - Iter(train) [ 4450/40000]  lr: 9.0032e-03  eta: 7:01:13  time: 0.7628  data_time: 0.0108  memory: 3518  loss: 0.1303  decode.loss_ce: 0.0941  decode.acc_seg: 98.4091  aux.loss_ce: 0.0362  aux.acc_seg: 97.2907
+2023/06/14 18:12:59 - mmengine - INFO - Iter(train) [ 4500/40000]  lr: 8.9919e-03  eta: 7:00:56  time: 0.7436  data_time: 0.0043  memory: 3518  loss: 0.1335  decode.loss_ce: 0.0951  decode.acc_seg: 94.8296  aux.loss_ce: 0.0385  aux.acc_seg: 95.5881
+2023/06/14 18:13:35 - mmengine - INFO - Iter(train) [ 4550/40000]  lr: 8.9807e-03  eta: 7:00:27  time: 0.6990  data_time: 0.0045  memory: 3518  loss: 0.0784  decode.loss_ce: 0.0525  decode.acc_seg: 95.7130  aux.loss_ce: 0.0259  aux.acc_seg: 95.8396
+2023/06/14 18:14:10 - mmengine - INFO - Iter(train) [ 4600/40000]  lr: 8.9694e-03  eta: 6:59:45  time: 0.6956  data_time: 0.0035  memory: 3518  loss: 0.0909  decode.loss_ce: 0.0628  decode.acc_seg: 96.0597  aux.loss_ce: 0.0281  aux.acc_seg: 96.4349
+2023/06/14 18:14:45 - mmengine - INFO - Iter(train) [ 4650/40000]  lr: 8.9581e-03  eta: 6:59:06  time: 0.7027  data_time: 0.0043  memory: 3518  loss: 0.1135  decode.loss_ce: 0.0776  decode.acc_seg: 93.6194  aux.loss_ce: 0.0359  aux.acc_seg: 93.4413
+2023/06/14 18:15:20 - mmengine - INFO - Iter(train) [ 4700/40000]  lr: 8.9468e-03  eta: 6:58:25  time: 0.7112  data_time: 0.0050  memory: 3518  loss: 0.1153  decode.loss_ce: 0.0794  decode.acc_seg: 98.3113  aux.loss_ce: 0.0360  aux.acc_seg: 98.5311
+2023/06/14 18:15:55 - mmengine - INFO - Iter(train) [ 4750/40000]  lr: 8.9356e-03  eta: 6:57:46  time: 0.7047  data_time: 0.0055  memory: 3518  loss: 0.0917  decode.loss_ce: 0.0633  decode.acc_seg: 95.0250  aux.loss_ce: 0.0284  aux.acc_seg: 94.2933
+2023/06/14 18:16:30 - mmengine - INFO - Iter(train) [ 4800/40000]  lr: 8.9243e-03  eta: 6:57:06  time: 0.6956  data_time: 0.0044  memory: 3518  loss: 0.2327  decode.loss_ce: 0.1669  decode.acc_seg: 95.2364  aux.loss_ce: 0.0658  aux.acc_seg: 93.3153
+2023/06/14 18:16:30 - mmengine - INFO - Saving checkpoint at 4800 iterations
+2023/06/14 18:16:44 - mmengine - INFO - per class results:
+2023/06/14 18:16:44 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.23 | 99.03 |
+|   green    | 95.25 |  96.2 |
+|   white    | 86.32 | 91.55 |
+| seed-black | 72.56 | 79.65 |
+| seed-white | 39.78 | 41.64 |
++------------+-------+-------+
+2023/06/14 18:16:44 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.7800  mIoU: 78.0300  mAcc: 81.6100  data_time: 0.0132  time: 0.5375
+2023/06/14 18:17:19 - mmengine - INFO - Iter(train) [ 4850/40000]  lr: 8.9130e-03  eta: 6:56:25  time: 0.6949  data_time: 0.0040  memory: 3518  loss: 0.0962  decode.loss_ce: 0.0668  decode.acc_seg: 98.2365  aux.loss_ce: 0.0294  aux.acc_seg: 98.2719
+2023/06/14 18:17:54 - mmengine - INFO - Iter(train) [ 4900/40000]  lr: 8.9017e-03  eta: 6:55:45  time: 0.7057  data_time: 0.0052  memory: 3518  loss: 0.0895  decode.loss_ce: 0.0595  decode.acc_seg: 96.6857  aux.loss_ce: 0.0300  aux.acc_seg: 95.7923
+2023/06/14 18:18:29 - mmengine - INFO - Iter(train) [ 4950/40000]  lr: 8.8904e-03  eta: 6:55:06  time: 0.6968  data_time: 0.0049  memory: 3518  loss: 0.0814  decode.loss_ce: 0.0560  decode.acc_seg: 95.7291  aux.loss_ce: 0.0254  aux.acc_seg: 95.3998
+2023/06/14 18:19:05 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 18:19:05 - mmengine - INFO - Iter(train) [ 5000/40000]  lr: 8.8791e-03  eta: 6:54:32  time: 0.7440  data_time: 0.0107  memory: 3518  loss: 0.1359  decode.loss_ce: 0.0936  decode.acc_seg: 92.2123  aux.loss_ce: 0.0423  aux.acc_seg: 92.7426
+2023/06/14 18:19:40 - mmengine - INFO - Iter(train) [ 5050/40000]  lr: 8.8679e-03  eta: 6:53:55  time: 0.6998  data_time: 0.0042  memory: 3518  loss: 0.0990  decode.loss_ce: 0.0685  decode.acc_seg: 95.3780  aux.loss_ce: 0.0305  aux.acc_seg: 96.0194
+2023/06/14 18:20:16 - mmengine - INFO - Iter(train) [ 5100/40000]  lr: 8.8566e-03  eta: 6:53:17  time: 0.6980  data_time: 0.0044  memory: 3518  loss: 0.1304  decode.loss_ce: 0.0862  decode.acc_seg: 97.7934  aux.loss_ce: 0.0442  aux.acc_seg: 97.4013
+2023/06/14 18:20:51 - mmengine - INFO - Iter(train) [ 5150/40000]  lr: 8.8453e-03  eta: 6:52:40  time: 0.7106  data_time: 0.0040  memory: 3518  loss: 0.0909  decode.loss_ce: 0.0617  decode.acc_seg: 95.6923  aux.loss_ce: 0.0292  aux.acc_seg: 94.1591
+2023/06/14 18:21:26 - mmengine - INFO - Iter(train) [ 5200/40000]  lr: 8.8340e-03  eta: 6:52:02  time: 0.7009  data_time: 0.0041  memory: 3518  loss: 0.1291  decode.loss_ce: 0.0760  decode.acc_seg: 95.6420  aux.loss_ce: 0.0531  aux.acc_seg: 94.5537
+2023/06/14 18:21:26 - mmengine - INFO - Saving checkpoint at 5200 iterations
+2023/06/14 18:21:41 - mmengine - INFO - per class results:
+2023/06/14 18:21:41 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.24 | 99.08 |
+|   green    | 96.93 |  97.7 |
+|   white    | 87.41 | 91.26 |
+| seed-black | 70.29 |  81.2 |
+| seed-white | 29.32 | 30.34 |
++------------+-------+-------+
+2023/06/14 18:21:41 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.9900  mIoU: 76.0400  mAcc: 79.9100  data_time: 0.0151  time: 0.5414
+2023/06/14 18:22:16 - mmengine - INFO - Iter(train) [ 5250/40000]  lr: 8.8227e-03  eta: 6:51:25  time: 0.7001  data_time: 0.0050  memory: 3518  loss: 0.1136  decode.loss_ce: 0.0790  decode.acc_seg: 85.9403  aux.loss_ce: 0.0346  aux.acc_seg: 89.0892
+2023/06/14 18:22:51 - mmengine - INFO - Iter(train) [ 5300/40000]  lr: 8.8114e-03  eta: 6:50:46  time: 0.6973  data_time: 0.0040  memory: 3518  loss: 0.0846  decode.loss_ce: 0.0588  decode.acc_seg: 96.9335  aux.loss_ce: 0.0258  aux.acc_seg: 96.7430
+2023/06/14 18:23:26 - mmengine - INFO - Iter(train) [ 5350/40000]  lr: 8.8001e-03  eta: 6:50:07  time: 0.6935  data_time: 0.0045  memory: 3518  loss: 0.1017  decode.loss_ce: 0.0707  decode.acc_seg: 96.4326  aux.loss_ce: 0.0310  aux.acc_seg: 95.6755
+2023/06/14 18:24:01 - mmengine - INFO - Iter(train) [ 5400/40000]  lr: 8.7888e-03  eta: 6:49:27  time: 0.6936  data_time: 0.0038  memory: 3518  loss: 0.0860  decode.loss_ce: 0.0609  decode.acc_seg: 98.0480  aux.loss_ce: 0.0251  aux.acc_seg: 97.8777
+2023/06/14 18:24:36 - mmengine - INFO - Iter(train) [ 5450/40000]  lr: 8.7775e-03  eta: 6:48:50  time: 0.6956  data_time: 0.0039  memory: 3518  loss: 0.0904  decode.loss_ce: 0.0586  decode.acc_seg: 97.7363  aux.loss_ce: 0.0318  aux.acc_seg: 97.3347
+2023/06/14 18:25:11 - mmengine - INFO - Iter(train) [ 5500/40000]  lr: 8.7662e-03  eta: 6:48:09  time: 0.6925  data_time: 0.0036  memory: 3518  loss: 0.1268  decode.loss_ce: 0.0885  decode.acc_seg: 96.2744  aux.loss_ce: 0.0383  aux.acc_seg: 96.7598
+2023/06/14 18:25:45 - mmengine - INFO - Iter(train) [ 5550/40000]  lr: 8.7549e-03  eta: 6:47:28  time: 0.6924  data_time: 0.0040  memory: 3518  loss: 0.0956  decode.loss_ce: 0.0660  decode.acc_seg: 95.9716  aux.loss_ce: 0.0296  aux.acc_seg: 94.1985
+2023/06/14 18:26:20 - mmengine - INFO - Iter(train) [ 5600/40000]  lr: 8.7436e-03  eta: 6:46:48  time: 0.6967  data_time: 0.0037  memory: 3518  loss: 0.0667  decode.loss_ce: 0.0457  decode.acc_seg: 96.0407  aux.loss_ce: 0.0210  aux.acc_seg: 95.2426
+2023/06/14 18:26:20 - mmengine - INFO - Saving checkpoint at 5600 iterations
+2023/06/14 18:26:35 - mmengine - INFO - per class results:
+2023/06/14 18:26:35 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 94.34 | 99.05 |
+|   green    |  95.4 | 96.08 |
+|   white    | 81.52 | 85.93 |
+| seed-black | 58.51 | 61.72 |
+| seed-white | 40.81 |  46.2 |
++------------+-------+-------+
+2023/06/14 18:26:35 - mmengine - INFO - Iter(val) [11/11]    aAcc: 95.6100  mIoU: 74.1100  mAcc: 77.8000  data_time: 0.0102  time: 0.5334
+2023/06/14 18:27:10 - mmengine - INFO - Iter(train) [ 5650/40000]  lr: 8.7323e-03  eta: 6:46:09  time: 0.6921  data_time: 0.0037  memory: 3518  loss: 0.1065  decode.loss_ce: 0.0709  decode.acc_seg: 97.9436  aux.loss_ce: 0.0356  aux.acc_seg: 97.4131
+2023/06/14 18:27:44 - mmengine - INFO - Iter(train) [ 5700/40000]  lr: 8.7210e-03  eta: 6:45:28  time: 0.6919  data_time: 0.0034  memory: 3518  loss: 0.0766  decode.loss_ce: 0.0529  decode.acc_seg: 96.3013  aux.loss_ce: 0.0236  aux.acc_seg: 96.1246
+2023/06/14 18:28:19 - mmengine - INFO - Iter(train) [ 5750/40000]  lr: 8.7096e-03  eta: 6:44:48  time: 0.6962  data_time: 0.0047  memory: 3518  loss: 0.0854  decode.loss_ce: 0.0568  decode.acc_seg: 96.5447  aux.loss_ce: 0.0286  aux.acc_seg: 96.5713
+2023/06/14 18:28:54 - mmengine - INFO - Iter(train) [ 5800/40000]  lr: 8.6983e-03  eta: 6:44:08  time: 0.6965  data_time: 0.0049  memory: 3518  loss: 0.0754  decode.loss_ce: 0.0519  decode.acc_seg: 96.6378  aux.loss_ce: 0.0235  aux.acc_seg: 95.8913
+2023/06/14 18:29:28 - mmengine - INFO - Iter(train) [ 5850/40000]  lr: 8.6870e-03  eta: 6:43:29  time: 0.6928  data_time: 0.0040  memory: 3518  loss: 0.0852  decode.loss_ce: 0.0600  decode.acc_seg: 98.5701  aux.loss_ce: 0.0252  aux.acc_seg: 98.3220
+2023/06/14 18:30:03 - mmengine - INFO - Iter(train) [ 5900/40000]  lr: 8.6757e-03  eta: 6:42:49  time: 0.6923  data_time: 0.0036  memory: 3518  loss: 0.0938  decode.loss_ce: 0.0655  decode.acc_seg: 98.4027  aux.loss_ce: 0.0284  aux.acc_seg: 97.6324
+2023/06/14 18:30:38 - mmengine - INFO - Iter(train) [ 5950/40000]  lr: 8.6644e-03  eta: 6:42:09  time: 0.6926  data_time: 0.0041  memory: 3518  loss: 0.0702  decode.loss_ce: 0.0482  decode.acc_seg: 96.6574  aux.loss_ce: 0.0219  aux.acc_seg: 96.4548
+2023/06/14 18:31:12 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 18:31:12 - mmengine - INFO - Iter(train) [ 6000/40000]  lr: 8.6531e-03  eta: 6:41:29  time: 0.6908  data_time: 0.0036  memory: 3518  loss: 0.0763  decode.loss_ce: 0.0534  decode.acc_seg: 95.9303  aux.loss_ce: 0.0229  aux.acc_seg: 96.2496
+2023/06/14 18:31:12 - mmengine - INFO - Saving checkpoint at 6000 iterations
+2023/06/14 18:31:27 - mmengine - INFO - per class results:
+2023/06/14 18:31:27 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     |  93.2 | 99.42 |
+|   green    | 95.62 | 96.99 |
+|   white    | 74.35 | 77.43 |
+| seed-black | 64.77 | 69.47 |
+| seed-white | 32.11 | 32.78 |
++------------+-------+-------+
+2023/06/14 18:31:27 - mmengine - INFO - Iter(val) [11/11]    aAcc: 94.6400  mIoU: 72.0100  mAcc: 75.2200  data_time: 0.0110  time: 0.5394
+2023/06/14 18:32:01 - mmengine - INFO - Iter(train) [ 6050/40000]  lr: 8.6417e-03  eta: 6:40:50  time: 0.6957  data_time: 0.0048  memory: 3518  loss: 0.1019  decode.loss_ce: 0.0722  decode.acc_seg: 97.6252  aux.loss_ce: 0.0297  aux.acc_seg: 97.9272
+2023/06/14 18:32:36 - mmengine - INFO - Iter(train) [ 6100/40000]  lr: 8.6304e-03  eta: 6:40:11  time: 0.6966  data_time: 0.0053  memory: 3518  loss: 0.0859  decode.loss_ce: 0.0588  decode.acc_seg: 96.0135  aux.loss_ce: 0.0271  aux.acc_seg: 96.0396
+2023/06/14 18:33:11 - mmengine - INFO - Iter(train) [ 6150/40000]  lr: 8.6191e-03  eta: 6:39:31  time: 0.6922  data_time: 0.0044  memory: 3518  loss: 0.0740  decode.loss_ce: 0.0514  decode.acc_seg: 95.5194  aux.loss_ce: 0.0226  aux.acc_seg: 95.5480
+2023/06/14 18:33:46 - mmengine - INFO - Iter(train) [ 6200/40000]  lr: 8.6078e-03  eta: 6:38:52  time: 0.6941  data_time: 0.0046  memory: 3518  loss: 0.0631  decode.loss_ce: 0.0435  decode.acc_seg: 97.5111  aux.loss_ce: 0.0197  aux.acc_seg: 97.3585
+2023/06/14 18:34:20 - mmengine - INFO - Iter(train) [ 6250/40000]  lr: 8.5964e-03  eta: 6:38:13  time: 0.6911  data_time: 0.0034  memory: 3518  loss: 0.0676  decode.loss_ce: 0.0466  decode.acc_seg: 97.5814  aux.loss_ce: 0.0210  aux.acc_seg: 97.3798
+2023/06/14 18:34:55 - mmengine - INFO - Iter(train) [ 6300/40000]  lr: 8.5851e-03  eta: 6:37:34  time: 0.6921  data_time: 0.0038  memory: 3518  loss: 0.0828  decode.loss_ce: 0.0566  decode.acc_seg: 96.2976  aux.loss_ce: 0.0262  aux.acc_seg: 95.8665
+2023/06/14 18:35:30 - mmengine - INFO - Iter(train) [ 6350/40000]  lr: 8.5738e-03  eta: 6:36:55  time: 0.6973  data_time: 0.0051  memory: 3518  loss: 0.0658  decode.loss_ce: 0.0461  decode.acc_seg: 97.6627  aux.loss_ce: 0.0197  aux.acc_seg: 97.2260
+2023/06/14 18:36:04 - mmengine - INFO - Iter(train) [ 6400/40000]  lr: 8.5625e-03  eta: 6:36:16  time: 0.6918  data_time: 0.0036  memory: 3518  loss: 0.0818  decode.loss_ce: 0.0570  decode.acc_seg: 96.9259  aux.loss_ce: 0.0249  aux.acc_seg: 96.8289
+2023/06/14 18:36:04 - mmengine - INFO - Saving checkpoint at 6400 iterations
+2023/06/14 18:36:18 - mmengine - INFO - per class results:
+2023/06/14 18:36:18 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.67 | 98.44 |
+|   green    | 94.79 | 95.95 |
+|   white    | 88.67 |  95.6 |
+| seed-black | 72.34 | 82.01 |
+| seed-white | 44.73 | 47.72 |
++------------+-------+-------+
+2023/06/14 18:36:18 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.0900  mIoU: 79.4400  mAcc: 83.9400  data_time: 0.0115  time: 0.5272
+2023/06/14 18:36:53 - mmengine - INFO - Iter(train) [ 6450/40000]  lr: 8.5511e-03  eta: 6:35:38  time: 0.6898  data_time: 0.0032  memory: 3518  loss: 0.0878  decode.loss_ce: 0.0625  decode.acc_seg: 95.9449  aux.loss_ce: 0.0253  aux.acc_seg: 95.6806
+2023/06/14 18:37:28 - mmengine - INFO - Iter(train) [ 6500/40000]  lr: 8.5398e-03  eta: 6:34:59  time: 0.6920  data_time: 0.0036  memory: 3518  loss: 0.1378  decode.loss_ce: 0.0997  decode.acc_seg: 95.8044  aux.loss_ce: 0.0381  aux.acc_seg: 94.8943
+2023/06/14 18:38:02 - mmengine - INFO - Iter(train) [ 6550/40000]  lr: 8.5284e-03  eta: 6:34:19  time: 0.6913  data_time: 0.0034  memory: 3518  loss: 0.0764  decode.loss_ce: 0.0529  decode.acc_seg: 96.4271  aux.loss_ce: 0.0235  aux.acc_seg: 96.2236
+2023/06/14 18:38:37 - mmengine - INFO - Iter(train) [ 6600/40000]  lr: 8.5171e-03  eta: 6:33:41  time: 0.7075  data_time: 0.0058  memory: 3518  loss: 0.1108  decode.loss_ce: 0.0751  decode.acc_seg: 94.5660  aux.loss_ce: 0.0357  aux.acc_seg: 93.8037
+2023/06/14 18:39:12 - mmengine - INFO - Iter(train) [ 6650/40000]  lr: 8.5058e-03  eta: 6:33:05  time: 0.7002  data_time: 0.0053  memory: 3518  loss: 0.1110  decode.loss_ce: 0.0783  decode.acc_seg: 97.4088  aux.loss_ce: 0.0328  aux.acc_seg: 97.2663
+2023/06/14 18:39:47 - mmengine - INFO - Iter(train) [ 6700/40000]  lr: 8.4944e-03  eta: 6:32:27  time: 0.6924  data_time: 0.0037  memory: 3518  loss: 0.1010  decode.loss_ce: 0.0719  decode.acc_seg: 96.5066  aux.loss_ce: 0.0291  aux.acc_seg: 96.5618
+2023/06/14 18:40:22 - mmengine - INFO - Iter(train) [ 6750/40000]  lr: 8.4831e-03  eta: 6:31:48  time: 0.6965  data_time: 0.0050  memory: 3518  loss: 0.0888  decode.loss_ce: 0.0611  decode.acc_seg: 98.5890  aux.loss_ce: 0.0277  aux.acc_seg: 97.8699
+2023/06/14 18:40:57 - mmengine - INFO - Iter(train) [ 6800/40000]  lr: 8.4717e-03  eta: 6:31:10  time: 0.6923  data_time: 0.0037  memory: 3518  loss: 0.0825  decode.loss_ce: 0.0565  decode.acc_seg: 96.2207  aux.loss_ce: 0.0261  aux.acc_seg: 96.1550
+2023/06/14 18:40:57 - mmengine - INFO - Saving checkpoint at 6800 iterations
+2023/06/14 18:41:11 - mmengine - INFO - per class results:
+2023/06/14 18:41:11 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.11 | 99.35 |
+|   green    | 95.94 | 96.62 |
+|   white    | 85.74 | 89.86 |
+| seed-black | 69.32 | 76.07 |
+| seed-white | 39.59 | 42.08 |
++------------+-------+-------+
+2023/06/14 18:41:11 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.7300  mIoU: 77.3400  mAcc: 80.8000  data_time: 0.0105  time: 0.5360
+2023/06/14 18:41:45 - mmengine - INFO - Iter(train) [ 6850/40000]  lr: 8.4604e-03  eta: 6:30:31  time: 0.6933  data_time: 0.0041  memory: 3518  loss: 0.0861  decode.loss_ce: 0.0572  decode.acc_seg: 95.3271  aux.loss_ce: 0.0289  aux.acc_seg: 94.4709
+2023/06/14 18:42:20 - mmengine - INFO - Iter(train) [ 6900/40000]  lr: 8.4490e-03  eta: 6:29:52  time: 0.6926  data_time: 0.0039  memory: 3518  loss: 0.1102  decode.loss_ce: 0.0766  decode.acc_seg: 95.9233  aux.loss_ce: 0.0336  aux.acc_seg: 94.4494
+2023/06/14 18:42:54 - mmengine - INFO - Iter(train) [ 6950/40000]  lr: 8.4377e-03  eta: 6:29:13  time: 0.6924  data_time: 0.0041  memory: 3518  loss: 0.1363  decode.loss_ce: 0.0931  decode.acc_seg: 96.8836  aux.loss_ce: 0.0432  aux.acc_seg: 96.6398
+2023/06/14 18:43:29 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 18:43:29 - mmengine - INFO - Iter(train) [ 7000/40000]  lr: 8.4263e-03  eta: 6:28:34  time: 0.6915  data_time: 0.0034  memory: 3518  loss: 0.1219  decode.loss_ce: 0.0804  decode.acc_seg: 92.6103  aux.loss_ce: 0.0414  aux.acc_seg: 90.4536
+2023/06/14 18:44:04 - mmengine - INFO - Iter(train) [ 7050/40000]  lr: 8.4150e-03  eta: 6:27:56  time: 0.6902  data_time: 0.0031  memory: 3518  loss: 0.1133  decode.loss_ce: 0.0761  decode.acc_seg: 96.5384  aux.loss_ce: 0.0372  aux.acc_seg: 96.2900
+2023/06/14 18:44:38 - mmengine - INFO - Iter(train) [ 7100/40000]  lr: 8.4036e-03  eta: 6:27:17  time: 0.6914  data_time: 0.0035  memory: 3518  loss: 0.0739  decode.loss_ce: 0.0521  decode.acc_seg: 97.1778  aux.loss_ce: 0.0219  aux.acc_seg: 96.8496
+2023/06/14 18:45:13 - mmengine - INFO - Iter(train) [ 7150/40000]  lr: 8.3923e-03  eta: 6:26:39  time: 0.6946  data_time: 0.0049  memory: 3518  loss: 0.1119  decode.loss_ce: 0.0809  decode.acc_seg: 94.0345  aux.loss_ce: 0.0310  aux.acc_seg: 93.8273
+2023/06/14 18:45:48 - mmengine - INFO - Iter(train) [ 7200/40000]  lr: 8.3809e-03  eta: 6:26:01  time: 0.6936  data_time: 0.0039  memory: 3518  loss: 0.1233  decode.loss_ce: 0.0857  decode.acc_seg: 96.3701  aux.loss_ce: 0.0376  aux.acc_seg: 96.5049
+2023/06/14 18:45:48 - mmengine - INFO - Saving checkpoint at 7200 iterations
+2023/06/14 18:46:03 - mmengine - INFO - per class results:
+2023/06/14 18:46:03 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.79 | 98.58 |
+|   green    | 93.57 | 97.39 |
+|   white    | 86.36 | 92.26 |
+| seed-black | 71.98 | 78.73 |
+| seed-white | 45.23 | 48.16 |
++------------+-------+-------+
+2023/06/14 18:46:03 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.8200  mIoU: 78.7800  mAcc: 83.0200  data_time: 0.0116  time: 0.5330
+2023/06/14 18:46:37 - mmengine - INFO - Iter(train) [ 7250/40000]  lr: 8.3695e-03  eta: 6:25:23  time: 0.6938  data_time: 0.0042  memory: 3518  loss: 0.1287  decode.loss_ce: 0.0891  decode.acc_seg: 95.9878  aux.loss_ce: 0.0397  aux.acc_seg: 95.5350
+2023/06/14 18:47:12 - mmengine - INFO - Iter(train) [ 7300/40000]  lr: 8.3582e-03  eta: 6:24:45  time: 0.6927  data_time: 0.0042  memory: 3518  loss: 0.0935  decode.loss_ce: 0.0626  decode.acc_seg: 95.0110  aux.loss_ce: 0.0308  aux.acc_seg: 93.9403
+2023/06/14 18:47:47 - mmengine - INFO - Iter(train) [ 7350/40000]  lr: 8.3468e-03  eta: 6:24:07  time: 0.6954  data_time: 0.0046  memory: 3518  loss: 0.0923  decode.loss_ce: 0.0636  decode.acc_seg: 96.4348  aux.loss_ce: 0.0287  aux.acc_seg: 94.7950
+2023/06/14 18:48:22 - mmengine - INFO - Iter(train) [ 7400/40000]  lr: 8.3354e-03  eta: 6:23:30  time: 0.6992  data_time: 0.0053  memory: 3518  loss: 0.0873  decode.loss_ce: 0.0584  decode.acc_seg: 96.2807  aux.loss_ce: 0.0289  aux.acc_seg: 95.1570
+2023/06/14 18:48:57 - mmengine - INFO - Iter(train) [ 7450/40000]  lr: 8.3241e-03  eta: 6:22:53  time: 0.7042  data_time: 0.0067  memory: 3518  loss: 0.0611  decode.loss_ce: 0.0429  decode.acc_seg: 96.3644  aux.loss_ce: 0.0182  aux.acc_seg: 96.3343
+2023/06/14 18:49:32 - mmengine - INFO - Iter(train) [ 7500/40000]  lr: 8.3127e-03  eta: 6:22:17  time: 0.6936  data_time: 0.0041  memory: 3518  loss: 0.0802  decode.loss_ce: 0.0552  decode.acc_seg: 97.8685  aux.loss_ce: 0.0251  aux.acc_seg: 97.9571
+2023/06/14 18:50:06 - mmengine - INFO - Iter(train) [ 7550/40000]  lr: 8.3013e-03  eta: 6:21:39  time: 0.6968  data_time: 0.0061  memory: 3518  loss: 0.0543  decode.loss_ce: 0.0364  decode.acc_seg: 97.6204  aux.loss_ce: 0.0179  aux.acc_seg: 97.5407
+2023/06/14 18:50:41 - mmengine - INFO - Iter(train) [ 7600/40000]  lr: 8.2900e-03  eta: 6:21:01  time: 0.6953  data_time: 0.0052  memory: 3518  loss: 0.0831  decode.loss_ce: 0.0571  decode.acc_seg: 97.3267  aux.loss_ce: 0.0260  aux.acc_seg: 97.6177
+2023/06/14 18:50:41 - mmengine - INFO - Saving checkpoint at 7600 iterations
+2023/06/14 18:50:56 - mmengine - INFO - per class results:
+2023/06/14 18:50:56 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.38 | 98.92 |
+|   green    | 96.66 | 97.38 |
+|   white    | 87.37 | 91.77 |
+| seed-black | 72.94 | 84.54 |
+| seed-white | 47.84 | 52.21 |
++------------+-------+-------+
+2023/06/14 18:50:56 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.0600  mIoU: 80.2400  mAcc: 84.9600  data_time: 0.0125  time: 0.5408
+2023/06/14 18:51:30 - mmengine - INFO - Iter(train) [ 7650/40000]  lr: 8.2786e-03  eta: 6:20:24  time: 0.6935  data_time: 0.0040  memory: 3518  loss: 0.1130  decode.loss_ce: 0.0816  decode.acc_seg: 95.9877  aux.loss_ce: 0.0314  aux.acc_seg: 95.9562
+2023/06/14 18:52:05 - mmengine - INFO - Iter(train) [ 7700/40000]  lr: 8.2672e-03  eta: 6:19:46  time: 0.6935  data_time: 0.0045  memory: 3518  loss: 0.0844  decode.loss_ce: 0.0576  decode.acc_seg: 96.0209  aux.loss_ce: 0.0268  aux.acc_seg: 95.6250
+2023/06/14 18:52:40 - mmengine - INFO - Iter(train) [ 7750/40000]  lr: 8.2558e-03  eta: 6:19:08  time: 0.6975  data_time: 0.0050  memory: 3518  loss: 0.0699  decode.loss_ce: 0.0471  decode.acc_seg: 97.2869  aux.loss_ce: 0.0228  aux.acc_seg: 95.1493
+2023/06/14 18:53:15 - mmengine - INFO - Iter(train) [ 7800/40000]  lr: 8.2444e-03  eta: 6:18:31  time: 0.6941  data_time: 0.0038  memory: 3518  loss: 0.0699  decode.loss_ce: 0.0510  decode.acc_seg: 94.3790  aux.loss_ce: 0.0189  aux.acc_seg: 94.9728
+2023/06/14 18:53:49 - mmengine - INFO - Iter(train) [ 7850/40000]  lr: 8.2331e-03  eta: 6:17:53  time: 0.6956  data_time: 0.0045  memory: 3518  loss: 0.0668  decode.loss_ce: 0.0465  decode.acc_seg: 97.0416  aux.loss_ce: 0.0202  aux.acc_seg: 95.7799
+2023/06/14 18:54:24 - mmengine - INFO - Iter(train) [ 7900/40000]  lr: 8.2217e-03  eta: 6:17:16  time: 0.6938  data_time: 0.0043  memory: 3518  loss: 0.0828  decode.loss_ce: 0.0567  decode.acc_seg: 96.7988  aux.loss_ce: 0.0261  aux.acc_seg: 96.6280
+2023/06/14 18:54:59 - mmengine - INFO - Iter(train) [ 7950/40000]  lr: 8.2103e-03  eta: 6:16:39  time: 0.6924  data_time: 0.0040  memory: 3518  loss: 0.0758  decode.loss_ce: 0.0525  decode.acc_seg: 96.9722  aux.loss_ce: 0.0234  aux.acc_seg: 95.8348
+2023/06/14 18:55:33 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 18:55:33 - mmengine - INFO - Iter(train) [ 8000/40000]  lr: 8.1989e-03  eta: 6:16:01  time: 0.6931  data_time: 0.0040  memory: 3518  loss: 0.0881  decode.loss_ce: 0.0626  decode.acc_seg: 96.5167  aux.loss_ce: 0.0255  aux.acc_seg: 96.3667
+2023/06/14 18:55:33 - mmengine - INFO - Saving checkpoint at 8000 iterations
+2023/06/14 18:55:48 - mmengine - INFO - per class results:
+2023/06/14 18:55:48 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.26 | 99.01 |
+|   green    | 95.69 | 96.05 |
+|   white    | 87.02 |  91.6 |
+| seed-black | 71.89 | 87.23 |
+| seed-white | 44.37 | 47.29 |
++------------+-------+-------+
+2023/06/14 18:55:48 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.8800  mIoU: 79.0500  mAcc: 84.2400  data_time: 0.0128  time: 0.5262
+2023/06/14 18:56:23 - mmengine - INFO - Iter(train) [ 8050/40000]  lr: 8.1875e-03  eta: 6:15:24  time: 0.6926  data_time: 0.0041  memory: 3518  loss: 0.1037  decode.loss_ce: 0.0721  decode.acc_seg: 94.9464  aux.loss_ce: 0.0316  aux.acc_seg: 94.8847
+2023/06/14 18:56:57 - mmengine - INFO - Iter(train) [ 8100/40000]  lr: 8.1761e-03  eta: 6:14:47  time: 0.6950  data_time: 0.0044  memory: 3518  loss: 0.0843  decode.loss_ce: 0.0589  decode.acc_seg: 97.7905  aux.loss_ce: 0.0254  aux.acc_seg: 97.6140
+2023/06/14 18:57:32 - mmengine - INFO - Iter(train) [ 8150/40000]  lr: 8.1647e-03  eta: 6:14:09  time: 0.6931  data_time: 0.0042  memory: 3518  loss: 0.0864  decode.loss_ce: 0.0605  decode.acc_seg: 95.7095  aux.loss_ce: 0.0259  aux.acc_seg: 95.9650
+2023/06/14 18:58:07 - mmengine - INFO - Iter(train) [ 8200/40000]  lr: 8.1533e-03  eta: 6:13:32  time: 0.6929  data_time: 0.0040  memory: 3518  loss: 0.0658  decode.loss_ce: 0.0454  decode.acc_seg: 95.5407  aux.loss_ce: 0.0204  aux.acc_seg: 94.6433
+2023/06/14 18:58:42 - mmengine - INFO - Iter(train) [ 8250/40000]  lr: 8.1419e-03  eta: 6:12:55  time: 0.7000  data_time: 0.0066  memory: 3518  loss: 0.0730  decode.loss_ce: 0.0492  decode.acc_seg: 98.6786  aux.loss_ce: 0.0238  aux.acc_seg: 98.2857
+2023/06/14 18:59:17 - mmengine - INFO - Iter(train) [ 8300/40000]  lr: 8.1305e-03  eta: 6:12:19  time: 0.6977  data_time: 0.0050  memory: 3518  loss: 0.0873  decode.loss_ce: 0.0591  decode.acc_seg: 98.0103  aux.loss_ce: 0.0282  aux.acc_seg: 97.1821
+2023/06/14 18:59:52 - mmengine - INFO - Iter(train) [ 8350/40000]  lr: 8.1191e-03  eta: 6:11:43  time: 0.6938  data_time: 0.0040  memory: 3518  loss: 0.0786  decode.loss_ce: 0.0550  decode.acc_seg: 97.6714  aux.loss_ce: 0.0236  aux.acc_seg: 97.3586
+2023/06/14 19:00:26 - mmengine - INFO - Iter(train) [ 8400/40000]  lr: 8.1077e-03  eta: 6:11:06  time: 0.6945  data_time: 0.0048  memory: 3518  loss: 0.1241  decode.loss_ce: 0.0726  decode.acc_seg: 92.3703  aux.loss_ce: 0.0515  aux.acc_seg: 90.7956
+2023/06/14 19:00:26 - mmengine - INFO - Saving checkpoint at 8400 iterations
+2023/06/14 19:00:41 - mmengine - INFO - per class results:
+2023/06/14 19:00:41 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 92.49 | 98.95 |
+|   green    | 96.27 | 97.16 |
+|   white    | 73.33 | 77.62 |
+| seed-black | 64.23 | 68.12 |
+| seed-white |  5.06 |  5.09 |
++------------+-------+-------+
+2023/06/14 19:00:41 - mmengine - INFO - Iter(val) [11/11]    aAcc: 94.2500  mIoU: 66.2700  mAcc: 69.3900  data_time: 0.0122  time: 0.5317
+2023/06/14 19:01:16 - mmengine - INFO - Iter(train) [ 8450/40000]  lr: 8.0963e-03  eta: 6:10:28  time: 0.6954  data_time: 0.0052  memory: 3518  loss: 0.0921  decode.loss_ce: 0.0610  decode.acc_seg: 96.8154  aux.loss_ce: 0.0311  aux.acc_seg: 91.8845
+2023/06/14 19:01:51 - mmengine - INFO - Iter(train) [ 8500/40000]  lr: 8.0849e-03  eta: 6:09:51  time: 0.6930  data_time: 0.0042  memory: 3518  loss: 0.0767  decode.loss_ce: 0.0516  decode.acc_seg: 96.2736  aux.loss_ce: 0.0251  aux.acc_seg: 95.5975
+2023/06/14 19:02:26 - mmengine - INFO - Iter(train) [ 8550/40000]  lr: 8.0735e-03  eta: 6:09:14  time: 0.6948  data_time: 0.0044  memory: 3518  loss: 0.0769  decode.loss_ce: 0.0501  decode.acc_seg: 98.6644  aux.loss_ce: 0.0268  aux.acc_seg: 98.5780
+2023/06/14 19:03:00 - mmengine - INFO - Iter(train) [ 8600/40000]  lr: 8.0621e-03  eta: 6:08:37  time: 0.6929  data_time: 0.0040  memory: 3518  loss: 0.0882  decode.loss_ce: 0.0629  decode.acc_seg: 93.8688  aux.loss_ce: 0.0253  aux.acc_seg: 94.6467
+2023/06/14 19:03:35 - mmengine - INFO - Iter(train) [ 8650/40000]  lr: 8.0507e-03  eta: 6:08:00  time: 0.6931  data_time: 0.0039  memory: 3518  loss: 0.2271  decode.loss_ce: 0.1571  decode.acc_seg: 94.4278  aux.loss_ce: 0.0700  aux.acc_seg: 93.7876
+2023/06/14 19:04:10 - mmengine - INFO - Iter(train) [ 8700/40000]  lr: 8.0393e-03  eta: 6:07:23  time: 0.6940  data_time: 0.0043  memory: 3518  loss: 0.0938  decode.loss_ce: 0.0557  decode.acc_seg: 97.5261  aux.loss_ce: 0.0381  aux.acc_seg: 97.5206
+2023/06/14 19:04:44 - mmengine - INFO - Iter(train) [ 8750/40000]  lr: 8.0279e-03  eta: 6:06:46  time: 0.6947  data_time: 0.0046  memory: 3518  loss: 0.0722  decode.loss_ce: 0.0498  decode.acc_seg: 96.6382  aux.loss_ce: 0.0223  aux.acc_seg: 96.8775
+2023/06/14 19:05:19 - mmengine - INFO - Iter(train) [ 8800/40000]  lr: 8.0164e-03  eta: 6:06:09  time: 0.6966  data_time: 0.0050  memory: 3518  loss: 0.0928  decode.loss_ce: 0.0652  decode.acc_seg: 97.7896  aux.loss_ce: 0.0276  aux.acc_seg: 97.7843
+2023/06/14 19:05:19 - mmengine - INFO - Saving checkpoint at 8800 iterations
+2023/06/14 19:05:34 - mmengine - INFO - per class results:
+2023/06/14 19:05:34 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.84 | 98.93 |
+|   green    |  95.8 | 97.09 |
+|   white    | 88.54 | 93.52 |
+| seed-black | 73.28 | 80.86 |
+| seed-white |  47.6 | 50.99 |
++------------+-------+-------+
+2023/06/14 19:05:34 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.2600  mIoU: 80.4100  mAcc: 84.2800  data_time: 0.0132  time: 0.5407
+2023/06/14 19:06:09 - mmengine - INFO - Iter(train) [ 8850/40000]  lr: 8.0050e-03  eta: 6:05:32  time: 0.6937  data_time: 0.0040  memory: 3518  loss: 0.0840  decode.loss_ce: 0.0566  decode.acc_seg: 97.9975  aux.loss_ce: 0.0274  aux.acc_seg: 98.0252
+2023/06/14 19:06:43 - mmengine - INFO - Iter(train) [ 8900/40000]  lr: 7.9936e-03  eta: 6:04:55  time: 0.6932  data_time: 0.0038  memory: 3518  loss: 0.1270  decode.loss_ce: 0.0859  decode.acc_seg: 98.1399  aux.loss_ce: 0.0411  aux.acc_seg: 98.3622
+2023/06/14 19:07:18 - mmengine - INFO - Iter(train) [ 8950/40000]  lr: 7.9822e-03  eta: 6:04:18  time: 0.6968  data_time: 0.0041  memory: 3518  loss: 0.0992  decode.loss_ce: 0.0684  decode.acc_seg: 92.0583  aux.loss_ce: 0.0307  aux.acc_seg: 92.6963
+2023/06/14 19:07:53 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 19:07:53 - mmengine - INFO - Iter(train) [ 9000/40000]  lr: 7.9708e-03  eta: 6:03:41  time: 0.6935  data_time: 0.0046  memory: 3518  loss: 0.0888  decode.loss_ce: 0.0613  decode.acc_seg: 96.2840  aux.loss_ce: 0.0275  aux.acc_seg: 95.7701
+2023/06/14 19:08:28 - mmengine - INFO - Iter(train) [ 9050/40000]  lr: 7.9593e-03  eta: 6:03:05  time: 0.7015  data_time: 0.0068  memory: 3518  loss: 0.0803  decode.loss_ce: 0.0550  decode.acc_seg: 94.0730  aux.loss_ce: 0.0253  aux.acc_seg: 93.6179
+2023/06/14 19:09:03 - mmengine - INFO - Iter(train) [ 9100/40000]  lr: 7.9479e-03  eta: 6:02:30  time: 0.7042  data_time: 0.0065  memory: 3518  loss: 0.0825  decode.loss_ce: 0.0572  decode.acc_seg: 98.1949  aux.loss_ce: 0.0253  aux.acc_seg: 98.4943
+2023/06/14 19:09:38 - mmengine - INFO - Iter(train) [ 9150/40000]  lr: 7.9365e-03  eta: 6:01:54  time: 0.6944  data_time: 0.0046  memory: 3518  loss: 0.0799  decode.loss_ce: 0.0527  decode.acc_seg: 96.5436  aux.loss_ce: 0.0272  aux.acc_seg: 96.1761
+2023/06/14 19:10:13 - mmengine - INFO - Iter(train) [ 9200/40000]  lr: 7.9250e-03  eta: 6:01:17  time: 0.6930  data_time: 0.0036  memory: 3518  loss: 0.0764  decode.loss_ce: 0.0537  decode.acc_seg: 96.1987  aux.loss_ce: 0.0227  aux.acc_seg: 95.9822
+2023/06/14 19:10:13 - mmengine - INFO - Saving checkpoint at 9200 iterations
+2023/06/14 19:10:28 - mmengine - INFO - per class results:
+2023/06/14 19:10:28 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.57 | 99.35 |
+|   green    | 95.83 | 96.49 |
+|   white    | 87.52 | 91.01 |
+| seed-black | 72.43 | 85.49 |
+| seed-white | 43.94 |  47.6 |
++------------+-------+-------+
+2023/06/14 19:10:28 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.0600  mIoU: 79.2600  mAcc: 83.9900  data_time: 0.0118  time: 0.5302
+2023/06/14 19:11:03 - mmengine - INFO - Iter(train) [ 9250/40000]  lr: 7.9136e-03  eta: 6:00:40  time: 0.6931  data_time: 0.0040  memory: 3518  loss: 0.0812  decode.loss_ce: 0.0540  decode.acc_seg: 97.7763  aux.loss_ce: 0.0272  aux.acc_seg: 97.4655
+2023/06/14 19:11:37 - mmengine - INFO - Iter(train) [ 9300/40000]  lr: 7.9022e-03  eta: 6:00:03  time: 0.6950  data_time: 0.0049  memory: 3518  loss: 0.1019  decode.loss_ce: 0.0751  decode.acc_seg: 98.1193  aux.loss_ce: 0.0268  aux.acc_seg: 97.9856
+2023/06/14 19:12:12 - mmengine - INFO - Iter(train) [ 9350/40000]  lr: 7.8907e-03  eta: 5:59:27  time: 0.6975  data_time: 0.0057  memory: 3518  loss: 0.0623  decode.loss_ce: 0.0416  decode.acc_seg: 98.6874  aux.loss_ce: 0.0207  aux.acc_seg: 97.9219
+2023/06/14 19:12:47 - mmengine - INFO - Iter(train) [ 9400/40000]  lr: 7.8793e-03  eta: 5:58:50  time: 0.6935  data_time: 0.0044  memory: 3518  loss: 0.0885  decode.loss_ce: 0.0559  decode.acc_seg: 96.4967  aux.loss_ce: 0.0326  aux.acc_seg: 96.7763
+2023/06/14 19:13:22 - mmengine - INFO - Iter(train) [ 9450/40000]  lr: 7.8679e-03  eta: 5:58:14  time: 0.6955  data_time: 0.0047  memory: 3518  loss: 0.0734  decode.loss_ce: 0.0508  decode.acc_seg: 98.4421  aux.loss_ce: 0.0226  aux.acc_seg: 97.7436
+2023/06/14 19:13:57 - mmengine - INFO - Iter(train) [ 9500/40000]  lr: 7.8564e-03  eta: 5:57:37  time: 0.6950  data_time: 0.0043  memory: 3518  loss: 0.0802  decode.loss_ce: 0.0541  decode.acc_seg: 98.4919  aux.loss_ce: 0.0261  aux.acc_seg: 98.3196
+2023/06/14 19:14:31 - mmengine - INFO - Iter(train) [ 9550/40000]  lr: 7.8450e-03  eta: 5:57:01  time: 0.6947  data_time: 0.0043  memory: 3518  loss: 0.0705  decode.loss_ce: 0.0468  decode.acc_seg: 98.3612  aux.loss_ce: 0.0237  aux.acc_seg: 98.2137
+2023/06/14 19:15:06 - mmengine - INFO - Iter(train) [ 9600/40000]  lr: 7.8335e-03  eta: 5:56:24  time: 0.6936  data_time: 0.0035  memory: 3518  loss: 0.0761  decode.loss_ce: 0.0532  decode.acc_seg: 96.9881  aux.loss_ce: 0.0229  aux.acc_seg: 95.3396
+2023/06/14 19:15:06 - mmengine - INFO - Saving checkpoint at 9600 iterations
+2023/06/14 19:15:21 - mmengine - INFO - per class results:
+2023/06/14 19:15:21 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.45 | 98.73 |
+|   green    | 96.76 | 97.54 |
+|   white    |  88.6 | 93.25 |
+| seed-black | 72.71 | 86.99 |
+| seed-white | 32.61 | 33.58 |
++------------+-------+-------+
+2023/06/14 19:15:21 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.1600  mIoU: 77.4200  mAcc: 82.0200  data_time: 0.0133  time: 0.5391
+2023/06/14 19:15:55 - mmengine - INFO - Iter(train) [ 9650/40000]  lr: 7.8221e-03  eta: 5:55:48  time: 0.6947  data_time: 0.0049  memory: 3518  loss: 0.0735  decode.loss_ce: 0.0501  decode.acc_seg: 98.0844  aux.loss_ce: 0.0235  aux.acc_seg: 97.7701
+2023/06/14 19:16:30 - mmengine - INFO - Iter(train) [ 9700/40000]  lr: 7.8106e-03  eta: 5:55:11  time: 0.6934  data_time: 0.0039  memory: 3518  loss: 0.0833  decode.loss_ce: 0.0585  decode.acc_seg: 96.3776  aux.loss_ce: 0.0248  aux.acc_seg: 96.3979
+2023/06/14 19:17:05 - mmengine - INFO - Iter(train) [ 9750/40000]  lr: 7.7992e-03  eta: 5:54:34  time: 0.6939  data_time: 0.0042  memory: 3518  loss: 0.0813  decode.loss_ce: 0.0574  decode.acc_seg: 95.6407  aux.loss_ce: 0.0238  aux.acc_seg: 95.9855
+2023/06/14 19:17:39 - mmengine - INFO - Iter(train) [ 9800/40000]  lr: 7.7877e-03  eta: 5:53:58  time: 0.6937  data_time: 0.0039  memory: 3518  loss: 0.0732  decode.loss_ce: 0.0502  decode.acc_seg: 97.3056  aux.loss_ce: 0.0230  aux.acc_seg: 97.5028
+2023/06/14 19:18:14 - mmengine - INFO - Iter(train) [ 9850/40000]  lr: 7.7763e-03  eta: 5:53:21  time: 0.6938  data_time: 0.0039  memory: 3518  loss: 0.0739  decode.loss_ce: 0.0517  decode.acc_seg: 96.8925  aux.loss_ce: 0.0222  aux.acc_seg: 97.0448
+2023/06/14 19:18:49 - mmengine - INFO - Iter(train) [ 9900/40000]  lr: 7.7648e-03  eta: 5:52:45  time: 0.6985  data_time: 0.0058  memory: 3518  loss: 0.0898  decode.loss_ce: 0.0614  decode.acc_seg: 98.9071  aux.loss_ce: 0.0284  aux.acc_seg: 98.9031
+2023/06/14 19:19:24 - mmengine - INFO - Iter(train) [ 9950/40000]  lr: 7.7533e-03  eta: 5:52:10  time: 0.7007  data_time: 0.0062  memory: 3518  loss: 0.0654  decode.loss_ce: 0.0459  decode.acc_seg: 97.2516  aux.loss_ce: 0.0195  aux.acc_seg: 97.2504
+2023/06/14 19:19:59 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 19:19:59 - mmengine - INFO - Iter(train) [10000/40000]  lr: 7.7419e-03  eta: 5:51:33  time: 0.6948  data_time: 0.0042  memory: 3518  loss: 0.0577  decode.loss_ce: 0.0385  decode.acc_seg: 94.2336  aux.loss_ce: 0.0192  aux.acc_seg: 94.3261
+2023/06/14 19:19:59 - mmengine - INFO - Saving checkpoint at 10000 iterations
+2023/06/14 19:20:14 - mmengine - INFO - per class results:
+2023/06/14 19:20:14 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.93 | 99.03 |
+|   green    | 95.71 | 96.65 |
+|   white    | 88.66 | 93.59 |
+| seed-black | 74.67 | 84.11 |
+| seed-white | 52.02 | 53.86 |
++------------+-------+-------+
+2023/06/14 19:20:14 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.3100  mIoU: 81.6000  mAcc: 85.4500  data_time: 0.0120  time: 0.5302
+2023/06/14 19:20:48 - mmengine - INFO - Iter(train) [10050/40000]  lr: 7.7304e-03  eta: 5:50:57  time: 0.6963  data_time: 0.0049  memory: 3518  loss: 0.0814  decode.loss_ce: 0.0545  decode.acc_seg: 98.1525  aux.loss_ce: 0.0269  aux.acc_seg: 97.8971
+2023/06/14 19:21:23 - mmengine - INFO - Iter(train) [10100/40000]  lr: 7.7189e-03  eta: 5:50:20  time: 0.6918  data_time: 0.0041  memory: 3518  loss: 0.0593  decode.loss_ce: 0.0407  decode.acc_seg: 97.5171  aux.loss_ce: 0.0186  aux.acc_seg: 97.3839
+2023/06/14 19:21:58 - mmengine - INFO - Iter(train) [10150/40000]  lr: 7.7075e-03  eta: 5:49:44  time: 0.6942  data_time: 0.0044  memory: 3518  loss: 0.0752  decode.loss_ce: 0.0527  decode.acc_seg: 94.4505  aux.loss_ce: 0.0225  aux.acc_seg: 94.1588
+2023/06/14 19:22:33 - mmengine - INFO - Iter(train) [10200/40000]  lr: 7.6960e-03  eta: 5:49:07  time: 0.6925  data_time: 0.0040  memory: 3518  loss: 0.0955  decode.loss_ce: 0.0651  decode.acc_seg: 93.7561  aux.loss_ce: 0.0303  aux.acc_seg: 94.6595
+2023/06/14 19:23:07 - mmengine - INFO - Iter(train) [10250/40000]  lr: 7.6845e-03  eta: 5:48:31  time: 0.6925  data_time: 0.0041  memory: 3518  loss: 0.0628  decode.loss_ce: 0.0421  decode.acc_seg: 99.0623  aux.loss_ce: 0.0207  aux.acc_seg: 99.2983
+2023/06/14 19:23:42 - mmengine - INFO - Iter(train) [10300/40000]  lr: 7.6731e-03  eta: 5:47:55  time: 0.6933  data_time: 0.0038  memory: 3518  loss: 0.0598  decode.loss_ce: 0.0410  decode.acc_seg: 96.4844  aux.loss_ce: 0.0187  aux.acc_seg: 96.3844
+2023/06/14 19:24:17 - mmengine - INFO - Iter(train) [10350/40000]  lr: 7.6616e-03  eta: 5:47:18  time: 0.6950  data_time: 0.0048  memory: 3518  loss: 0.0926  decode.loss_ce: 0.0630  decode.acc_seg: 98.2830  aux.loss_ce: 0.0296  aux.acc_seg: 98.3391
+2023/06/14 19:24:52 - mmengine - INFO - Iter(train) [10400/40000]  lr: 7.6501e-03  eta: 5:46:42  time: 0.6943  data_time: 0.0047  memory: 3518  loss: 0.0602  decode.loss_ce: 0.0419  decode.acc_seg: 97.0968  aux.loss_ce: 0.0182  aux.acc_seg: 96.9125
+2023/06/14 19:24:52 - mmengine - INFO - Saving checkpoint at 10400 iterations
+2023/06/14 19:25:06 - mmengine - INFO - per class results:
+2023/06/14 19:25:06 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.78 | 99.02 |
+|   green    | 96.57 | 97.31 |
+|   white    | 89.18 | 93.04 |
+| seed-black | 72.75 | 89.52 |
+| seed-white | 32.53 | 33.25 |
++------------+-------+-------+
+2023/06/14 19:25:06 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.3100  mIoU: 77.5600  mAcc: 82.4300  data_time: 0.0127  time: 0.5372
+2023/06/14 19:25:41 - mmengine - INFO - Iter(train) [10450/40000]  lr: 7.6386e-03  eta: 5:46:06  time: 0.6939  data_time: 0.0045  memory: 3518  loss: 0.0903  decode.loss_ce: 0.0621  decode.acc_seg: 98.1988  aux.loss_ce: 0.0282  aux.acc_seg: 98.0713
+2023/06/14 19:26:15 - mmengine - INFO - Iter(train) [10500/40000]  lr: 7.6272e-03  eta: 5:45:29  time: 0.6954  data_time: 0.0056  memory: 3518  loss: 0.0657  decode.loss_ce: 0.0446  decode.acc_seg: 98.3166  aux.loss_ce: 0.0211  aux.acc_seg: 98.2689
+2023/06/14 19:26:50 - mmengine - INFO - Iter(train) [10550/40000]  lr: 7.6157e-03  eta: 5:44:53  time: 0.6943  data_time: 0.0042  memory: 3518  loss: 0.0755  decode.loss_ce: 0.0521  decode.acc_seg: 96.5247  aux.loss_ce: 0.0234  aux.acc_seg: 95.0012
+2023/06/14 19:27:25 - mmengine - INFO - Iter(train) [10600/40000]  lr: 7.6042e-03  eta: 5:44:17  time: 0.6937  data_time: 0.0041  memory: 3518  loss: 0.0737  decode.loss_ce: 0.0503  decode.acc_seg: 96.1717  aux.loss_ce: 0.0234  aux.acc_seg: 96.3886
+2023/06/14 19:28:00 - mmengine - INFO - Iter(train) [10650/40000]  lr: 7.5927e-03  eta: 5:43:40  time: 0.6951  data_time: 0.0048  memory: 3518  loss: 0.0870  decode.loss_ce: 0.0620  decode.acc_seg: 97.8916  aux.loss_ce: 0.0250  aux.acc_seg: 98.0626
+2023/06/14 19:28:34 - mmengine - INFO - Iter(train) [10700/40000]  lr: 7.5812e-03  eta: 5:43:04  time: 0.6991  data_time: 0.0056  memory: 3518  loss: 0.0716  decode.loss_ce: 0.0473  decode.acc_seg: 97.3652  aux.loss_ce: 0.0243  aux.acc_seg: 97.4495
+2023/06/14 19:29:09 - mmengine - INFO - Iter(train) [10750/40000]  lr: 7.5697e-03  eta: 5:42:29  time: 0.6992  data_time: 0.0060  memory: 3518  loss: 0.1675  decode.loss_ce: 0.1191  decode.acc_seg: 94.6044  aux.loss_ce: 0.0484  aux.acc_seg: 91.0839
+2023/06/14 19:29:44 - mmengine - INFO - Iter(train) [10800/40000]  lr: 7.5582e-03  eta: 5:41:53  time: 0.6942  data_time: 0.0048  memory: 3518  loss: 0.0954  decode.loss_ce: 0.0662  decode.acc_seg: 98.6323  aux.loss_ce: 0.0292  aux.acc_seg: 98.5199
+2023/06/14 19:29:44 - mmengine - INFO - Saving checkpoint at 10800 iterations
+2023/06/14 19:29:59 - mmengine - INFO - per class results:
+2023/06/14 19:29:59 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 93.96 | 99.57 |
+|   green    | 95.25 | 95.65 |
+|   white    | 76.32 |  79.7 |
+| seed-black | 75.29 | 83.22 |
+| seed-white | 47.54 |  49.2 |
++------------+-------+-------+
+2023/06/14 19:29:59 - mmengine - INFO - Iter(val) [11/11]    aAcc: 95.1600  mIoU: 77.6700  mAcc: 81.4700  data_time: 0.0142  time: 0.5386
+2023/06/14 19:30:34 - mmengine - INFO - Iter(train) [10850/40000]  lr: 7.5467e-03  eta: 5:41:17  time: 0.6946  data_time: 0.0048  memory: 3518  loss: 0.0813  decode.loss_ce: 0.0535  decode.acc_seg: 96.6739  aux.loss_ce: 0.0278  aux.acc_seg: 95.7702
+2023/06/14 19:31:09 - mmengine - INFO - Iter(train) [10900/40000]  lr: 7.5352e-03  eta: 5:40:40  time: 0.6940  data_time: 0.0052  memory: 3518  loss: 0.0740  decode.loss_ce: 0.0503  decode.acc_seg: 97.7421  aux.loss_ce: 0.0237  aux.acc_seg: 97.7868
+2023/06/14 19:31:43 - mmengine - INFO - Iter(train) [10950/40000]  lr: 7.5237e-03  eta: 5:40:04  time: 0.6968  data_time: 0.0065  memory: 3518  loss: 0.0766  decode.loss_ce: 0.0523  decode.acc_seg: 99.2624  aux.loss_ce: 0.0244  aux.acc_seg: 99.1024
+2023/06/14 19:32:18 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 19:32:18 - mmengine - INFO - Iter(train) [11000/40000]  lr: 7.5122e-03  eta: 5:39:28  time: 0.6940  data_time: 0.0048  memory: 3518  loss: 0.0914  decode.loss_ce: 0.0601  decode.acc_seg: 97.4363  aux.loss_ce: 0.0313  aux.acc_seg: 97.0542
+2023/06/14 19:32:53 - mmengine - INFO - Iter(train) [11050/40000]  lr: 7.5007e-03  eta: 5:38:52  time: 0.6937  data_time: 0.0046  memory: 3518  loss: 0.0942  decode.loss_ce: 0.0656  decode.acc_seg: 97.6368  aux.loss_ce: 0.0286  aux.acc_seg: 97.5685
+2023/06/14 19:33:27 - mmengine - INFO - Iter(train) [11100/40000]  lr: 7.4892e-03  eta: 5:38:16  time: 0.6950  data_time: 0.0056  memory: 3518  loss: 0.0813  decode.loss_ce: 0.0565  decode.acc_seg: 93.7800  aux.loss_ce: 0.0248  aux.acc_seg: 93.4027
+2023/06/14 19:34:02 - mmengine - INFO - Iter(train) [11150/40000]  lr: 7.4777e-03  eta: 5:37:40  time: 0.6929  data_time: 0.0040  memory: 3518  loss: 0.1407  decode.loss_ce: 0.0976  decode.acc_seg: 97.4316  aux.loss_ce: 0.0431  aux.acc_seg: 97.4636
+2023/06/14 19:34:37 - mmengine - INFO - Iter(train) [11200/40000]  lr: 7.4662e-03  eta: 5:37:03  time: 0.6940  data_time: 0.0043  memory: 3518  loss: 0.1122  decode.loss_ce: 0.0687  decode.acc_seg: 96.7595  aux.loss_ce: 0.0434  aux.acc_seg: 95.8867
+2023/06/14 19:34:37 - mmengine - INFO - Saving checkpoint at 11200 iterations
+2023/06/14 19:34:51 - mmengine - INFO - per class results:
+2023/06/14 19:34:51 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     |  95.9 | 98.97 |
+|   green    |  95.8 | 96.19 |
+|   white    | 85.11 | 90.11 |
+| seed-black | 72.82 |  86.7 |
+| seed-white |  37.5 | 39.67 |
++------------+-------+-------+
+2023/06/14 19:34:51 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.5900  mIoU: 77.4300  mAcc: 82.3300  data_time: 0.0137  time: 0.5299
+2023/06/14 19:35:26 - mmengine - INFO - Iter(train) [11250/40000]  lr: 7.4547e-03  eta: 5:36:27  time: 0.6954  data_time: 0.0052  memory: 3518  loss: 0.0772  decode.loss_ce: 0.0536  decode.acc_seg: 96.7563  aux.loss_ce: 0.0235  aux.acc_seg: 96.2523
+2023/06/14 19:36:01 - mmengine - INFO - Iter(train) [11300/40000]  lr: 7.4432e-03  eta: 5:35:51  time: 0.6945  data_time: 0.0040  memory: 3518  loss: 0.0801  decode.loss_ce: 0.0551  decode.acc_seg: 95.6771  aux.loss_ce: 0.0250  aux.acc_seg: 95.2841
+2023/06/14 19:36:36 - mmengine - INFO - Iter(train) [11350/40000]  lr: 7.4317e-03  eta: 5:35:16  time: 0.6998  data_time: 0.0061  memory: 3518  loss: 0.0721  decode.loss_ce: 0.0491  decode.acc_seg: 97.9463  aux.loss_ce: 0.0230  aux.acc_seg: 97.9896
+2023/06/14 19:37:10 - mmengine - INFO - Iter(train) [11400/40000]  lr: 7.4202e-03  eta: 5:34:39  time: 0.6932  data_time: 0.0041  memory: 3518  loss: 0.0796  decode.loss_ce: 0.0525  decode.acc_seg: 97.0529  aux.loss_ce: 0.0271  aux.acc_seg: 96.3414
+2023/06/14 19:37:45 - mmengine - INFO - Iter(train) [11450/40000]  lr: 7.4086e-03  eta: 5:34:03  time: 0.6942  data_time: 0.0044  memory: 3518  loss: 0.0863  decode.loss_ce: 0.0580  decode.acc_seg: 96.8708  aux.loss_ce: 0.0282  aux.acc_seg: 94.6011
+2023/06/14 19:38:20 - mmengine - INFO - Iter(train) [11500/40000]  lr: 7.3971e-03  eta: 5:33:27  time: 0.7030  data_time: 0.0064  memory: 3518  loss: 0.0769  decode.loss_ce: 0.0517  decode.acc_seg: 97.4876  aux.loss_ce: 0.0252  aux.acc_seg: 97.5029
+2023/06/14 19:38:55 - mmengine - INFO - Iter(train) [11550/40000]  lr: 7.3856e-03  eta: 5:32:52  time: 0.7083  data_time: 0.0073  memory: 3518  loss: 0.0649  decode.loss_ce: 0.0444  decode.acc_seg: 95.6287  aux.loss_ce: 0.0206  aux.acc_seg: 94.7667
+2023/06/14 19:39:30 - mmengine - INFO - Iter(train) [11600/40000]  lr: 7.3741e-03  eta: 5:32:17  time: 0.6970  data_time: 0.0043  memory: 3518  loss: 0.0918  decode.loss_ce: 0.0620  decode.acc_seg: 98.2550  aux.loss_ce: 0.0298  aux.acc_seg: 98.0036
+2023/06/14 19:39:30 - mmengine - INFO - Saving checkpoint at 11600 iterations
+2023/06/14 19:39:45 - mmengine - INFO - per class results:
+2023/06/14 19:39:45 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 95.07 | 99.21 |
+|   green    | 96.77 | 97.52 |
+|   white    | 82.76 | 85.91 |
+| seed-black | 73.72 | 83.14 |
+| seed-white | 37.97 | 38.85 |
++------------+-------+-------+
+2023/06/14 19:39:45 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.2200  mIoU: 77.2600  mAcc: 80.9300  data_time: 0.0120  time: 0.5296
+2023/06/14 19:40:20 - mmengine - INFO - Iter(train) [11650/40000]  lr: 7.3625e-03  eta: 5:31:41  time: 0.6938  data_time: 0.0044  memory: 3518  loss: 0.2358  decode.loss_ce: 0.1600  decode.acc_seg: 86.8687  aux.loss_ce: 0.0758  aux.acc_seg: 76.5317
+2023/06/14 19:40:55 - mmengine - INFO - Iter(train) [11700/40000]  lr: 7.3510e-03  eta: 5:31:05  time: 0.6945  data_time: 0.0047  memory: 3518  loss: 0.1133  decode.loss_ce: 0.0796  decode.acc_seg: 90.4717  aux.loss_ce: 0.0337  aux.acc_seg: 88.8639
+2023/06/14 19:41:29 - mmengine - INFO - Iter(train) [11750/40000]  lr: 7.3395e-03  eta: 5:30:28  time: 0.6936  data_time: 0.0047  memory: 3518  loss: 0.0990  decode.loss_ce: 0.0693  decode.acc_seg: 94.7147  aux.loss_ce: 0.0297  aux.acc_seg: 95.3615
+2023/06/14 19:42:04 - mmengine - INFO - Iter(train) [11800/40000]  lr: 7.3280e-03  eta: 5:29:52  time: 0.6935  data_time: 0.0040  memory: 3518  loss: 0.1048  decode.loss_ce: 0.0700  decode.acc_seg: 97.8267  aux.loss_ce: 0.0348  aux.acc_seg: 97.5821
+2023/06/14 19:42:39 - mmengine - INFO - Iter(train) [11850/40000]  lr: 7.3164e-03  eta: 5:29:16  time: 0.6939  data_time: 0.0045  memory: 3518  loss: 0.0677  decode.loss_ce: 0.0458  decode.acc_seg: 96.8406  aux.loss_ce: 0.0219  aux.acc_seg: 96.4563
+2023/06/14 19:43:13 - mmengine - INFO - Iter(train) [11900/40000]  lr: 7.3049e-03  eta: 5:28:40  time: 0.6926  data_time: 0.0041  memory: 3518  loss: 0.0715  decode.loss_ce: 0.0488  decode.acc_seg: 97.7416  aux.loss_ce: 0.0227  aux.acc_seg: 98.0036
+2023/06/14 19:43:48 - mmengine - INFO - Iter(train) [11950/40000]  lr: 7.2933e-03  eta: 5:28:04  time: 0.6922  data_time: 0.0038  memory: 3518  loss: 0.0647  decode.loss_ce: 0.0438  decode.acc_seg: 98.1933  aux.loss_ce: 0.0209  aux.acc_seg: 97.8458
+2023/06/14 19:44:23 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 19:44:23 - mmengine - INFO - Iter(train) [12000/40000]  lr: 7.2818e-03  eta: 5:27:28  time: 0.6932  data_time: 0.0049  memory: 3518  loss: 0.0664  decode.loss_ce: 0.0456  decode.acc_seg: 97.5330  aux.loss_ce: 0.0208  aux.acc_seg: 97.3661
+2023/06/14 19:44:23 - mmengine - INFO - Saving checkpoint at 12000 iterations
+2023/06/14 19:44:38 - mmengine - INFO - per class results:
+2023/06/14 19:44:38 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 95.63 | 99.38 |
+|   green    | 97.12 | 97.78 |
+|   white    | 84.13 |  86.9 |
+| seed-black | 73.12 | 80.34 |
+| seed-white | 56.58 | 62.88 |
++------------+-------+-------+
+2023/06/14 19:44:38 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.6100  mIoU: 81.3200  mAcc: 85.4600  data_time: 0.0127  time: 0.5375
+2023/06/14 19:45:12 - mmengine - INFO - Iter(train) [12050/40000]  lr: 7.2703e-03  eta: 5:26:52  time: 0.6923  data_time: 0.0037  memory: 3518  loss: 0.0662  decode.loss_ce: 0.0447  decode.acc_seg: 97.4197  aux.loss_ce: 0.0214  aux.acc_seg: 97.1382
+2023/06/14 19:45:47 - mmengine - INFO - Iter(train) [12100/40000]  lr: 7.2587e-03  eta: 5:26:16  time: 0.6902  data_time: 0.0037  memory: 3518  loss: 0.0747  decode.loss_ce: 0.0496  decode.acc_seg: 96.1476  aux.loss_ce: 0.0250  aux.acc_seg: 96.5796
+2023/06/14 19:46:21 - mmengine - INFO - Iter(train) [12150/40000]  lr: 7.2472e-03  eta: 5:25:40  time: 0.6911  data_time: 0.0032  memory: 3518  loss: 0.0716  decode.loss_ce: 0.0475  decode.acc_seg: 98.1240  aux.loss_ce: 0.0241  aux.acc_seg: 98.1240
+2023/06/14 19:46:56 - mmengine - INFO - Iter(train) [12200/40000]  lr: 7.2356e-03  eta: 5:25:04  time: 0.6903  data_time: 0.0036  memory: 3518  loss: 0.0693  decode.loss_ce: 0.0453  decode.acc_seg: 97.9071  aux.loss_ce: 0.0240  aux.acc_seg: 97.6982
+2023/06/14 19:47:31 - mmengine - INFO - Iter(train) [12250/40000]  lr: 7.2241e-03  eta: 5:24:27  time: 0.6916  data_time: 0.0038  memory: 3518  loss: 0.0821  decode.loss_ce: 0.0545  decode.acc_seg: 97.6853  aux.loss_ce: 0.0276  aux.acc_seg: 97.9630
+2023/06/14 19:48:05 - mmengine - INFO - Iter(train) [12300/40000]  lr: 7.2125e-03  eta: 5:23:51  time: 0.6937  data_time: 0.0043  memory: 3518  loss: 0.0928  decode.loss_ce: 0.0639  decode.acc_seg: 98.0602  aux.loss_ce: 0.0289  aux.acc_seg: 97.7189
+2023/06/14 19:48:40 - mmengine - INFO - Iter(train) [12350/40000]  lr: 7.2010e-03  eta: 5:23:15  time: 0.6949  data_time: 0.0045  memory: 3518  loss: 0.0751  decode.loss_ce: 0.0463  decode.acc_seg: 97.2938  aux.loss_ce: 0.0287  aux.acc_seg: 87.7924
+2023/06/14 19:49:15 - mmengine - INFO - Iter(train) [12400/40000]  lr: 7.1894e-03  eta: 5:22:40  time: 0.6955  data_time: 0.0049  memory: 3518  loss: 0.0868  decode.loss_ce: 0.0574  decode.acc_seg: 97.4383  aux.loss_ce: 0.0295  aux.acc_seg: 97.3776
+2023/06/14 19:49:15 - mmengine - INFO - Saving checkpoint at 12400 iterations
+2023/06/14 19:49:29 - mmengine - INFO - per class results:
+2023/06/14 19:49:29 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.44 | 99.39 |
+|   green    | 95.43 | 96.62 |
+|   white    | 86.28 | 90.07 |
+| seed-black | 74.05 | 80.32 |
+| seed-white |  56.5 | 59.79 |
++------------+-------+-------+
+2023/06/14 19:49:29 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.9300  mIoU: 81.7400  mAcc: 85.2400  data_time: 0.0129  time: 0.5325
+2023/06/14 19:50:04 - mmengine - INFO - Iter(train) [12450/40000]  lr: 7.1778e-03  eta: 5:22:04  time: 0.6915  data_time: 0.0039  memory: 3518  loss: 0.1031  decode.loss_ce: 0.0705  decode.acc_seg: 97.2688  aux.loss_ce: 0.0327  aux.acc_seg: 97.3572
+2023/06/14 19:50:39 - mmengine - INFO - Iter(train) [12500/40000]  lr: 7.1663e-03  eta: 5:21:27  time: 0.6921  data_time: 0.0039  memory: 3518  loss: 0.0694  decode.loss_ce: 0.0482  decode.acc_seg: 97.7681  aux.loss_ce: 0.0212  aux.acc_seg: 97.8235
+2023/06/14 19:51:13 - mmengine - INFO - Iter(train) [12550/40000]  lr: 7.1547e-03  eta: 5:20:51  time: 0.6917  data_time: 0.0035  memory: 3518  loss: 0.0779  decode.loss_ce: 0.0530  decode.acc_seg: 97.3579  aux.loss_ce: 0.0249  aux.acc_seg: 97.0465
+2023/06/14 19:51:48 - mmengine - INFO - Iter(train) [12600/40000]  lr: 7.1431e-03  eta: 5:20:15  time: 0.6914  data_time: 0.0036  memory: 3518  loss: 0.0627  decode.loss_ce: 0.0430  decode.acc_seg: 97.9384  aux.loss_ce: 0.0197  aux.acc_seg: 98.0265
+2023/06/14 19:52:22 - mmengine - INFO - Iter(train) [12650/40000]  lr: 7.1316e-03  eta: 5:19:39  time: 0.6906  data_time: 0.0034  memory: 3518  loss: 0.0773  decode.loss_ce: 0.0533  decode.acc_seg: 97.1264  aux.loss_ce: 0.0239  aux.acc_seg: 96.3807
+2023/06/14 19:52:57 - mmengine - INFO - Iter(train) [12700/40000]  lr: 7.1200e-03  eta: 5:19:03  time: 0.6910  data_time: 0.0037  memory: 3518  loss: 0.0664  decode.loss_ce: 0.0460  decode.acc_seg: 97.3077  aux.loss_ce: 0.0204  aux.acc_seg: 96.7746
+2023/06/14 19:53:31 - mmengine - INFO - Iter(train) [12750/40000]  lr: 7.1084e-03  eta: 5:18:27  time: 0.6901  data_time: 0.0034  memory: 3518  loss: 0.0795  decode.loss_ce: 0.0535  decode.acc_seg: 98.0337  aux.loss_ce: 0.0259  aux.acc_seg: 97.3838
+2023/06/14 19:54:06 - mmengine - INFO - Iter(train) [12800/40000]  lr: 7.0969e-03  eta: 5:17:51  time: 0.6956  data_time: 0.0045  memory: 3518  loss: 0.0813  decode.loss_ce: 0.0564  decode.acc_seg: 97.5789  aux.loss_ce: 0.0249  aux.acc_seg: 97.3828
+2023/06/14 19:54:06 - mmengine - INFO - Saving checkpoint at 12800 iterations
+2023/06/14 19:54:20 - mmengine - INFO - per class results:
+2023/06/14 19:54:20 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.52 |  99.5 |
+|   green    | 95.02 | 97.33 |
+|   white    | 86.35 | 89.19 |
+| seed-black | 74.62 | 81.94 |
+| seed-white |  39.0 | 39.41 |
++------------+-------+-------+
+2023/06/14 19:54:20 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.9000  mIoU: 78.3000  mAcc: 81.4700  data_time: 0.0142  time: 0.5323
+2023/06/14 19:54:55 - mmengine - INFO - Iter(train) [12850/40000]  lr: 7.0853e-03  eta: 5:17:15  time: 0.6917  data_time: 0.0036  memory: 3518  loss: 0.0894  decode.loss_ce: 0.0580  decode.acc_seg: 98.4169  aux.loss_ce: 0.0314  aux.acc_seg: 98.1384
+2023/06/14 19:55:29 - mmengine - INFO - Iter(train) [12900/40000]  lr: 7.0737e-03  eta: 5:16:39  time: 0.6914  data_time: 0.0032  memory: 3518  loss: 0.0942  decode.loss_ce: 0.0646  decode.acc_seg: 96.6171  aux.loss_ce: 0.0296  aux.acc_seg: 96.5639
+2023/06/14 19:56:04 - mmengine - INFO - Iter(train) [12950/40000]  lr: 7.0621e-03  eta: 5:16:03  time: 0.6913  data_time: 0.0032  memory: 3518  loss: 0.0681  decode.loss_ce: 0.0467  decode.acc_seg: 97.1354  aux.loss_ce: 0.0214  aux.acc_seg: 97.0964
+2023/06/14 19:56:38 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 19:56:38 - mmengine - INFO - Iter(train) [13000/40000]  lr: 7.0505e-03  eta: 5:15:27  time: 0.6929  data_time: 0.0039  memory: 3518  loss: 0.0615  decode.loss_ce: 0.0414  decode.acc_seg: 99.0217  aux.loss_ce: 0.0201  aux.acc_seg: 98.6194
+2023/06/14 19:57:13 - mmengine - INFO - Iter(train) [13050/40000]  lr: 7.0390e-03  eta: 5:14:51  time: 0.6941  data_time: 0.0039  memory: 3518  loss: 0.0539  decode.loss_ce: 0.0377  decode.acc_seg: 98.6037  aux.loss_ce: 0.0162  aux.acc_seg: 98.5775
+2023/06/14 19:57:48 - mmengine - INFO - Iter(train) [13100/40000]  lr: 7.0274e-03  eta: 5:14:15  time: 0.6932  data_time: 0.0036  memory: 3518  loss: 0.0840  decode.loss_ce: 0.0580  decode.acc_seg: 97.7283  aux.loss_ce: 0.0260  aux.acc_seg: 97.7848
+2023/06/14 19:58:22 - mmengine - INFO - Iter(train) [13150/40000]  lr: 7.0158e-03  eta: 5:13:39  time: 0.6948  data_time: 0.0042  memory: 3518  loss: 0.0677  decode.loss_ce: 0.0465  decode.acc_seg: 96.1885  aux.loss_ce: 0.0212  aux.acc_seg: 95.1920
+2023/06/14 19:58:57 - mmengine - INFO - Iter(train) [13200/40000]  lr: 7.0042e-03  eta: 5:13:04  time: 0.6991  data_time: 0.0046  memory: 3518  loss: 0.0582  decode.loss_ce: 0.0391  decode.acc_seg: 97.5067  aux.loss_ce: 0.0191  aux.acc_seg: 97.0976
+2023/06/14 19:58:57 - mmengine - INFO - Saving checkpoint at 13200 iterations
+2023/06/14 19:59:12 - mmengine - INFO - per class results:
+2023/06/14 19:59:12 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 97.08 | 98.93 |
+|   green    | 96.61 | 97.42 |
+|   white    |  89.6 | 94.23 |
+| seed-black | 74.58 | 84.67 |
+| seed-white | 58.99 |  63.7 |
++------------+-------+-------+
+2023/06/14 19:59:12 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.5400  mIoU: 83.3800  mAcc: 87.7900  data_time: 0.0146  time: 0.5267
+2023/06/14 19:59:12 - mmengine - INFO - The previous best checkpoint E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\best_aAcc_iter_3600.pth is removed
+2023/06/14 19:59:19 - mmengine - INFO - The best checkpoint with 97.5400 aAcc at 13200 iter is saved to best_aAcc_iter_13200.pth.
+2023/06/14 19:59:54 - mmengine - INFO - Iter(train) [13250/40000]  lr: 6.9926e-03  eta: 5:12:42  time: 0.6911  data_time: 0.0037  memory: 3518  loss: 0.1076  decode.loss_ce: 0.0661  decode.acc_seg: 96.4077  aux.loss_ce: 0.0415  aux.acc_seg: 96.7645
+2023/06/14 20:00:28 - mmengine - INFO - Iter(train) [13300/40000]  lr: 6.9810e-03  eta: 5:12:06  time: 0.6916  data_time: 0.0039  memory: 3518  loss: 0.0893  decode.loss_ce: 0.0599  decode.acc_seg: 95.9981  aux.loss_ce: 0.0294  aux.acc_seg: 95.7935
+2023/06/14 20:01:03 - mmengine - INFO - Iter(train) [13350/40000]  lr: 6.9694e-03  eta: 5:11:30  time: 0.6900  data_time: 0.0035  memory: 3518  loss: 0.0584  decode.loss_ce: 0.0405  decode.acc_seg: 98.4660  aux.loss_ce: 0.0179  aux.acc_seg: 98.3715
+2023/06/14 20:01:37 - mmengine - INFO - Iter(train) [13400/40000]  lr: 6.9578e-03  eta: 5:10:54  time: 0.6908  data_time: 0.0038  memory: 3518  loss: 0.0797  decode.loss_ce: 0.0554  decode.acc_seg: 95.6077  aux.loss_ce: 0.0244  aux.acc_seg: 94.0579
+2023/06/14 20:02:12 - mmengine - INFO - Iter(train) [13450/40000]  lr: 6.9462e-03  eta: 5:10:18  time: 0.6909  data_time: 0.0035  memory: 3518  loss: 0.0631  decode.loss_ce: 0.0429  decode.acc_seg: 98.1512  aux.loss_ce: 0.0202  aux.acc_seg: 97.8691
+2023/06/14 20:02:47 - mmengine - INFO - Iter(train) [13500/40000]  lr: 6.9346e-03  eta: 5:09:42  time: 0.6903  data_time: 0.0031  memory: 3518  loss: 0.0751  decode.loss_ce: 0.0510  decode.acc_seg: 96.6945  aux.loss_ce: 0.0242  aux.acc_seg: 95.6025
+2023/06/14 20:03:21 - mmengine - INFO - Iter(train) [13550/40000]  lr: 6.9230e-03  eta: 5:09:06  time: 0.6914  data_time: 0.0035  memory: 3518  loss: 0.0709  decode.loss_ce: 0.0470  decode.acc_seg: 96.6571  aux.loss_ce: 0.0239  aux.acc_seg: 91.6940
+2023/06/14 20:03:56 - mmengine - INFO - Iter(train) [13600/40000]  lr: 6.9114e-03  eta: 5:08:30  time: 0.6931  data_time: 0.0042  memory: 3518  loss: 0.0871  decode.loss_ce: 0.0565  decode.acc_seg: 96.6431  aux.loss_ce: 0.0306  aux.acc_seg: 95.9584
+2023/06/14 20:03:56 - mmengine - INFO - Saving checkpoint at 13600 iterations
+2023/06/14 20:04:10 - mmengine - INFO - per class results:
+2023/06/14 20:04:10 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     |  97.0 | 98.83 |
+|   green    | 85.02 | 85.19 |
+|   white    | 81.44 | 95.79 |
+| seed-black | 73.74 | 82.17 |
+| seed-white | 53.93 | 57.43 |
++------------+-------+-------+
+2023/06/14 20:04:10 - mmengine - INFO - Iter(val) [11/11]    aAcc: 95.6300  mIoU: 78.2300  mAcc: 83.8800  data_time: 0.0148  time: 0.5359
+2023/06/14 20:04:44 - mmengine - INFO - Iter(train) [13650/40000]  lr: 6.8998e-03  eta: 5:07:54  time: 0.6920  data_time: 0.0037  memory: 3518  loss: 0.0770  decode.loss_ce: 0.0524  decode.acc_seg: 97.2496  aux.loss_ce: 0.0246  aux.acc_seg: 97.2814
+2023/06/14 20:05:19 - mmengine - INFO - Iter(train) [13700/40000]  lr: 6.8881e-03  eta: 5:07:18  time: 0.6964  data_time: 0.0046  memory: 3518  loss: 0.0657  decode.loss_ce: 0.0454  decode.acc_seg: 97.2246  aux.loss_ce: 0.0203  aux.acc_seg: 97.3385
+2023/06/14 20:05:54 - mmengine - INFO - Iter(train) [13750/40000]  lr: 6.8765e-03  eta: 5:06:42  time: 0.6908  data_time: 0.0037  memory: 3518  loss: 0.0601  decode.loss_ce: 0.0422  decode.acc_seg: 96.8953  aux.loss_ce: 0.0179  aux.acc_seg: 97.5583
+2023/06/14 20:06:28 - mmengine - INFO - Iter(train) [13800/40000]  lr: 6.8649e-03  eta: 5:06:06  time: 0.6922  data_time: 0.0040  memory: 3518  loss: 0.0705  decode.loss_ce: 0.0487  decode.acc_seg: 96.7304  aux.loss_ce: 0.0219  aux.acc_seg: 96.5839
+2023/06/14 20:07:03 - mmengine - INFO - Iter(train) [13850/40000]  lr: 6.8533e-03  eta: 5:05:30  time: 0.6902  data_time: 0.0035  memory: 3518  loss: 0.0536  decode.loss_ce: 0.0363  decode.acc_seg: 97.8398  aux.loss_ce: 0.0173  aux.acc_seg: 97.8381
+2023/06/14 20:07:37 - mmengine - INFO - Iter(train) [13900/40000]  lr: 6.8417e-03  eta: 5:04:54  time: 0.6918  data_time: 0.0039  memory: 3518  loss: 0.0673  decode.loss_ce: 0.0449  decode.acc_seg: 98.1584  aux.loss_ce: 0.0224  aux.acc_seg: 97.8099
+2023/06/14 20:08:12 - mmengine - INFO - Iter(train) [13950/40000]  lr: 6.8300e-03  eta: 5:04:18  time: 0.6899  data_time: 0.0038  memory: 3518  loss: 0.0571  decode.loss_ce: 0.0370  decode.acc_seg: 97.3519  aux.loss_ce: 0.0200  aux.acc_seg: 97.3064
+2023/06/14 20:08:47 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 20:08:47 - mmengine - INFO - Iter(train) [14000/40000]  lr: 6.8184e-03  eta: 5:03:43  time: 0.7000  data_time: 0.0050  memory: 3518  loss: 0.0741  decode.loss_ce: 0.0491  decode.acc_seg: 96.4203  aux.loss_ce: 0.0251  aux.acc_seg: 96.1437
+2023/06/14 20:08:47 - mmengine - INFO - Saving checkpoint at 14000 iterations
+2023/06/14 20:09:04 - mmengine - INFO - per class results:
+2023/06/14 20:09:04 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.96 | 99.17 |
+|   green    | 95.69 | 97.32 |
+|   white    | 88.13 | 92.01 |
+| seed-black | 73.71 | 82.77 |
+| seed-white |  58.5 |  64.7 |
++------------+-------+-------+
+2023/06/14 20:09:04 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.2800  mIoU: 82.6000  mAcc: 87.1900  data_time: 0.0137  time: 0.5276
+2023/06/14 20:09:39 - mmengine - INFO - Iter(train) [14050/40000]  lr: 6.8068e-03  eta: 5:03:07  time: 0.6931  data_time: 0.0044  memory: 3518  loss: 0.0538  decode.loss_ce: 0.0367  decode.acc_seg: 95.0812  aux.loss_ce: 0.0171  aux.acc_seg: 95.2527
+2023/06/14 20:10:13 - mmengine - INFO - Iter(train) [14100/40000]  lr: 6.7952e-03  eta: 5:02:31  time: 0.6922  data_time: 0.0043  memory: 3518  loss: 0.0597  decode.loss_ce: 0.0398  decode.acc_seg: 98.6299  aux.loss_ce: 0.0198  aux.acc_seg: 98.5085
+2023/06/14 20:10:48 - mmengine - INFO - Iter(train) [14150/40000]  lr: 6.7835e-03  eta: 5:01:56  time: 0.6928  data_time: 0.0049  memory: 3518  loss: 0.0639  decode.loss_ce: 0.0439  decode.acc_seg: 96.6385  aux.loss_ce: 0.0200  aux.acc_seg: 96.2504
+2023/06/14 20:11:22 - mmengine - INFO - Iter(train) [14200/40000]  lr: 6.7719e-03  eta: 5:01:20  time: 0.6903  data_time: 0.0037  memory: 3518  loss: 0.0581  decode.loss_ce: 0.0395  decode.acc_seg: 97.8727  aux.loss_ce: 0.0186  aux.acc_seg: 97.8191
+2023/06/14 20:11:57 - mmengine - INFO - Iter(train) [14250/40000]  lr: 6.7602e-03  eta: 5:00:44  time: 0.6901  data_time: 0.0034  memory: 3518  loss: 0.0840  decode.loss_ce: 0.0502  decode.acc_seg: 99.0015  aux.loss_ce: 0.0338  aux.acc_seg: 99.0648
+2023/06/14 20:12:32 - mmengine - INFO - Iter(train) [14300/40000]  lr: 6.7486e-03  eta: 5:00:08  time: 0.6943  data_time: 0.0044  memory: 3518  loss: 0.0578  decode.loss_ce: 0.0397  decode.acc_seg: 97.4101  aux.loss_ce: 0.0181  aux.acc_seg: 97.1701
+2023/06/14 20:13:06 - mmengine - INFO - Iter(train) [14350/40000]  lr: 6.7370e-03  eta: 4:59:32  time: 0.6914  data_time: 0.0036  memory: 3518  loss: 0.0600  decode.loss_ce: 0.0416  decode.acc_seg: 97.2222  aux.loss_ce: 0.0184  aux.acc_seg: 97.0070
+2023/06/14 20:13:41 - mmengine - INFO - Iter(train) [14400/40000]  lr: 6.7253e-03  eta: 4:58:56  time: 0.6913  data_time: 0.0033  memory: 3518  loss: 0.0737  decode.loss_ce: 0.0460  decode.acc_seg: 98.3819  aux.loss_ce: 0.0276  aux.acc_seg: 98.2278
+2023/06/14 20:13:41 - mmengine - INFO - Saving checkpoint at 14400 iterations
+2023/06/14 20:13:55 - mmengine - INFO - per class results:
+2023/06/14 20:13:55 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.58 | 98.94 |
+|   green    | 95.45 |  97.1 |
+|   white    | 87.04 | 91.92 |
+| seed-black |  72.9 | 80.15 |
+| seed-white | 56.04 | 59.85 |
++------------+-------+-------+
+2023/06/14 20:13:55 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.0300  mIoU: 81.6000  mAcc: 85.5900  data_time: 0.0118  time: 0.5368
+2023/06/14 20:14:29 - mmengine - INFO - Iter(train) [14450/40000]  lr: 6.7137e-03  eta: 4:58:21  time: 0.6900  data_time: 0.0038  memory: 3518  loss: 0.1133  decode.loss_ce: 0.0736  decode.acc_seg: 96.9165  aux.loss_ce: 0.0397  aux.acc_seg: 96.1747
+2023/06/14 20:15:04 - mmengine - INFO - Iter(train) [14500/40000]  lr: 6.7020e-03  eta: 4:57:45  time: 0.6903  data_time: 0.0036  memory: 3518  loss: 0.0549  decode.loss_ce: 0.0368  decode.acc_seg: 97.9551  aux.loss_ce: 0.0181  aux.acc_seg: 97.9018
+2023/06/14 20:15:38 - mmengine - INFO - Iter(train) [14550/40000]  lr: 6.6904e-03  eta: 4:57:09  time: 0.6921  data_time: 0.0036  memory: 3518  loss: 0.0906  decode.loss_ce: 0.0663  decode.acc_seg: 97.6931  aux.loss_ce: 0.0243  aux.acc_seg: 98.0260
+2023/06/14 20:16:13 - mmengine - INFO - Iter(train) [14600/40000]  lr: 6.6787e-03  eta: 4:56:33  time: 0.6910  data_time: 0.0038  memory: 3518  loss: 0.0654  decode.loss_ce: 0.0455  decode.acc_seg: 96.4767  aux.loss_ce: 0.0199  aux.acc_seg: 96.2121
+2023/06/14 20:16:48 - mmengine - INFO - Iter(train) [14650/40000]  lr: 6.6671e-03  eta: 4:55:57  time: 0.6907  data_time: 0.0035  memory: 3518  loss: 0.0837  decode.loss_ce: 0.0555  decode.acc_seg: 95.7777  aux.loss_ce: 0.0282  aux.acc_seg: 95.1414
+2023/06/14 20:17:22 - mmengine - INFO - Iter(train) [14700/40000]  lr: 6.6554e-03  eta: 4:55:21  time: 0.6909  data_time: 0.0035  memory: 3518  loss: 0.0721  decode.loss_ce: 0.0476  decode.acc_seg: 98.0064  aux.loss_ce: 0.0245  aux.acc_seg: 97.8152
+2023/06/14 20:17:57 - mmengine - INFO - Iter(train) [14750/40000]  lr: 6.6437e-03  eta: 4:54:46  time: 0.6987  data_time: 0.0058  memory: 3518  loss: 0.1013  decode.loss_ce: 0.0727  decode.acc_seg: 98.6201  aux.loss_ce: 0.0286  aux.acc_seg: 98.4848
+2023/06/14 20:18:32 - mmengine - INFO - Iter(train) [14800/40000]  lr: 6.6321e-03  eta: 4:54:10  time: 0.6948  data_time: 0.0044  memory: 3518  loss: 0.0715  decode.loss_ce: 0.0484  decode.acc_seg: 98.0137  aux.loss_ce: 0.0231  aux.acc_seg: 96.5583
+2023/06/14 20:18:32 - mmengine - INFO - Saving checkpoint at 14800 iterations
+2023/06/14 20:18:47 - mmengine - INFO - per class results:
+2023/06/14 20:18:47 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.81 | 99.06 |
+|   green    | 95.76 | 96.07 |
+|   white    | 88.28 | 94.19 |
+| seed-black | 74.01 | 80.13 |
+| seed-white | 36.06 |  36.7 |
++------------+-------+-------+
+2023/06/14 20:18:47 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.2000  mIoU: 78.1800  mAcc: 81.2300  data_time: 0.0126  time: 0.5257
+2023/06/14 20:19:22 - mmengine - INFO - Iter(train) [14850/40000]  lr: 6.6204e-03  eta: 4:53:35  time: 0.6953  data_time: 0.0046  memory: 3518  loss: 0.0593  decode.loss_ce: 0.0411  decode.acc_seg: 95.7845  aux.loss_ce: 0.0182  aux.acc_seg: 95.7200
+2023/06/14 20:19:56 - mmengine - INFO - Iter(train) [14900/40000]  lr: 6.6087e-03  eta: 4:52:59  time: 0.6915  data_time: 0.0036  memory: 3518  loss: 0.0702  decode.loss_ce: 0.0482  decode.acc_seg: 97.2410  aux.loss_ce: 0.0220  aux.acc_seg: 97.0833
+2023/06/14 20:20:31 - mmengine - INFO - Iter(train) [14950/40000]  lr: 6.5971e-03  eta: 4:52:23  time: 0.6910  data_time: 0.0036  memory: 3518  loss: 0.0722  decode.loss_ce: 0.0500  decode.acc_seg: 95.3896  aux.loss_ce: 0.0222  aux.acc_seg: 95.5571
+2023/06/14 20:21:05 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 20:21:05 - mmengine - INFO - Iter(train) [15000/40000]  lr: 6.5854e-03  eta: 4:51:48  time: 0.6916  data_time: 0.0040  memory: 3518  loss: 0.0745  decode.loss_ce: 0.0494  decode.acc_seg: 97.7070  aux.loss_ce: 0.0251  aux.acc_seg: 97.3727
+2023/06/14 20:21:40 - mmengine - INFO - Iter(train) [15050/40000]  lr: 6.5737e-03  eta: 4:51:12  time: 0.6922  data_time: 0.0036  memory: 3518  loss: 0.0685  decode.loss_ce: 0.0466  decode.acc_seg: 96.6629  aux.loss_ce: 0.0220  aux.acc_seg: 96.2860
+2023/06/14 20:22:14 - mmengine - INFO - Iter(train) [15100/40000]  lr: 6.5621e-03  eta: 4:50:36  time: 0.6920  data_time: 0.0041  memory: 3518  loss: 0.0833  decode.loss_ce: 0.0558  decode.acc_seg: 97.7024  aux.loss_ce: 0.0275  aux.acc_seg: 97.2808
+2023/06/14 20:22:49 - mmengine - INFO - Iter(train) [15150/40000]  lr: 6.5504e-03  eta: 4:50:00  time: 0.6924  data_time: 0.0044  memory: 3518  loss: 0.0726  decode.loss_ce: 0.0500  decode.acc_seg: 96.1560  aux.loss_ce: 0.0226  aux.acc_seg: 95.8008
+2023/06/14 20:23:24 - mmengine - INFO - Iter(train) [15200/40000]  lr: 6.5387e-03  eta: 4:49:25  time: 0.6991  data_time: 0.0052  memory: 3518  loss: 0.0808  decode.loss_ce: 0.0522  decode.acc_seg: 95.7058  aux.loss_ce: 0.0286  aux.acc_seg: 94.4743
+2023/06/14 20:23:24 - mmengine - INFO - Saving checkpoint at 15200 iterations
+2023/06/14 20:23:39 - mmengine - INFO - per class results:
+2023/06/14 20:23:39 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     |  96.9 | 98.31 |
+|   green    |  96.1 | 97.62 |
+|   white    | 89.32 | 95.77 |
+| seed-black | 74.49 | 86.25 |
+| seed-white | 44.15 | 45.13 |
++------------+-------+-------+
+2023/06/14 20:23:39 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.3600  mIoU: 80.1900  mAcc: 84.6200  data_time: 0.0113  time: 0.5300
+2023/06/14 20:24:13 - mmengine - INFO - Iter(train) [15250/40000]  lr: 6.5270e-03  eta: 4:48:49  time: 0.6906  data_time: 0.0037  memory: 3518  loss: 0.1031  decode.loss_ce: 0.0693  decode.acc_seg: 98.3294  aux.loss_ce: 0.0338  aux.acc_seg: 98.4326
+2023/06/14 20:24:48 - mmengine - INFO - Iter(train) [15300/40000]  lr: 6.5153e-03  eta: 4:48:14  time: 0.6918  data_time: 0.0035  memory: 3518  loss: 0.0610  decode.loss_ce: 0.0427  decode.acc_seg: 97.8837  aux.loss_ce: 0.0183  aux.acc_seg: 97.3496
+2023/06/14 20:25:22 - mmengine - INFO - Iter(train) [15350/40000]  lr: 6.5036e-03  eta: 4:47:38  time: 0.6908  data_time: 0.0037  memory: 3518  loss: 0.0965  decode.loss_ce: 0.0648  decode.acc_seg: 96.6921  aux.loss_ce: 0.0318  aux.acc_seg: 96.7407
+2023/06/14 20:25:57 - mmengine - INFO - Iter(train) [15400/40000]  lr: 6.4919e-03  eta: 4:47:02  time: 0.6912  data_time: 0.0035  memory: 3518  loss: 0.0831  decode.loss_ce: 0.0556  decode.acc_seg: 96.8355  aux.loss_ce: 0.0275  aux.acc_seg: 96.7098
+2023/06/14 20:26:32 - mmengine - INFO - Iter(train) [15450/40000]  lr: 6.4802e-03  eta: 4:46:26  time: 0.6911  data_time: 0.0037  memory: 3518  loss: 0.0825  decode.loss_ce: 0.0546  decode.acc_seg: 93.9102  aux.loss_ce: 0.0279  aux.acc_seg: 93.0133
+2023/06/14 20:27:06 - mmengine - INFO - Iter(train) [15500/40000]  lr: 6.4685e-03  eta: 4:45:51  time: 0.6914  data_time: 0.0036  memory: 3518  loss: 0.0683  decode.loss_ce: 0.0456  decode.acc_seg: 98.5611  aux.loss_ce: 0.0227  aux.acc_seg: 97.5278
+2023/06/14 20:27:41 - mmengine - INFO - Iter(train) [15550/40000]  lr: 6.4568e-03  eta: 4:45:15  time: 0.6934  data_time: 0.0040  memory: 3518  loss: 0.0630  decode.loss_ce: 0.0442  decode.acc_seg: 96.5803  aux.loss_ce: 0.0189  aux.acc_seg: 96.2814
+2023/06/14 20:28:15 - mmengine - INFO - Iter(train) [15600/40000]  lr: 6.4451e-03  eta: 4:44:40  time: 0.6933  data_time: 0.0043  memory: 3518  loss: 0.0626  decode.loss_ce: 0.0442  decode.acc_seg: 97.7044  aux.loss_ce: 0.0184  aux.acc_seg: 97.4881
+2023/06/14 20:28:15 - mmengine - INFO - Saving checkpoint at 15600 iterations
+2023/06/14 20:28:31 - mmengine - INFO - per class results:
+2023/06/14 20:28:31 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.23 | 99.08 |
+|   green    | 95.93 | 97.79 |
+|   white    | 86.33 |  90.5 |
+| seed-black |  71.6 | 76.13 |
+| seed-white | 40.29 | 40.89 |
++------------+-------+-------+
+2023/06/14 20:28:31 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.8500  mIoU: 78.0700  mAcc: 80.8800  data_time: 0.0138  time: 0.5267
+2023/06/14 20:29:05 - mmengine - INFO - Iter(train) [15650/40000]  lr: 6.4334e-03  eta: 4:44:04  time: 0.6958  data_time: 0.0044  memory: 3518  loss: 0.0888  decode.loss_ce: 0.0607  decode.acc_seg: 98.6866  aux.loss_ce: 0.0281  aux.acc_seg: 98.3741
+2023/06/14 20:29:40 - mmengine - INFO - Iter(train) [15700/40000]  lr: 6.4217e-03  eta: 4:43:29  time: 0.6909  data_time: 0.0038  memory: 3518  loss: 0.0665  decode.loss_ce: 0.0446  decode.acc_seg: 98.7010  aux.loss_ce: 0.0218  aux.acc_seg: 98.6216
+2023/06/14 20:30:15 - mmengine - INFO - Iter(train) [15750/40000]  lr: 6.4100e-03  eta: 4:42:53  time: 0.6909  data_time: 0.0039  memory: 3518  loss: 0.0801  decode.loss_ce: 0.0552  decode.acc_seg: 98.2179  aux.loss_ce: 0.0248  aux.acc_seg: 98.2599
+2023/06/14 20:30:49 - mmengine - INFO - Iter(train) [15800/40000]  lr: 6.3983e-03  eta: 4:42:17  time: 0.6912  data_time: 0.0039  memory: 3518  loss: 0.0688  decode.loss_ce: 0.0464  decode.acc_seg: 96.9222  aux.loss_ce: 0.0224  aux.acc_seg: 96.5417
+2023/06/14 20:31:24 - mmengine - INFO - Iter(train) [15850/40000]  lr: 6.3866e-03  eta: 4:41:42  time: 0.6916  data_time: 0.0035  memory: 3518  loss: 0.0609  decode.loss_ce: 0.0406  decode.acc_seg: 97.4798  aux.loss_ce: 0.0203  aux.acc_seg: 97.8643
+2023/06/14 20:31:58 - mmengine - INFO - Iter(train) [15900/40000]  lr: 6.3749e-03  eta: 4:41:06  time: 0.6918  data_time: 0.0038  memory: 3518  loss: 0.0628  decode.loss_ce: 0.0429  decode.acc_seg: 97.5785  aux.loss_ce: 0.0200  aux.acc_seg: 97.5707
+2023/06/14 20:32:33 - mmengine - INFO - Iter(train) [15950/40000]  lr: 6.3632e-03  eta: 4:40:31  time: 0.6915  data_time: 0.0035  memory: 3518  loss: 0.0784  decode.loss_ce: 0.0547  decode.acc_seg: 97.0753  aux.loss_ce: 0.0237  aux.acc_seg: 97.3985
+2023/06/14 20:33:08 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 20:33:08 - mmengine - INFO - Iter(train) [16000/40000]  lr: 6.3515e-03  eta: 4:39:55  time: 0.6926  data_time: 0.0038  memory: 3518  loss: 0.0770  decode.loss_ce: 0.0531  decode.acc_seg: 97.3922  aux.loss_ce: 0.0239  aux.acc_seg: 97.2426
+2023/06/14 20:33:08 - mmengine - INFO - Saving checkpoint at 16000 iterations
+2023/06/14 20:33:22 - mmengine - INFO - per class results:
+2023/06/14 20:33:22 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 97.19 | 98.88 |
+|   green    | 95.83 | 96.19 |
+|   white    | 89.52 | 95.37 |
+| seed-black |  75.6 | 85.74 |
+| seed-white | 61.47 |  64.8 |
++------------+-------+-------+
+2023/06/14 20:33:22 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.5100  mIoU: 83.9200  mAcc: 88.2000  data_time: 0.0114  time: 0.5278
+2023/06/14 20:33:57 - mmengine - INFO - Iter(train) [16050/40000]  lr: 6.3397e-03  eta: 4:39:19  time: 0.6918  data_time: 0.0042  memory: 3518  loss: 0.0606  decode.loss_ce: 0.0412  decode.acc_seg: 96.9590  aux.loss_ce: 0.0195  aux.acc_seg: 97.0627
+2023/06/14 20:34:31 - mmengine - INFO - Iter(train) [16100/40000]  lr: 6.3280e-03  eta: 4:38:44  time: 0.6916  data_time: 0.0040  memory: 3518  loss: 0.0583  decode.loss_ce: 0.0400  decode.acc_seg: 98.6180  aux.loss_ce: 0.0183  aux.acc_seg: 98.2347
+2023/06/14 20:35:06 - mmengine - INFO - Iter(train) [16150/40000]  lr: 6.3163e-03  eta: 4:38:08  time: 0.6898  data_time: 0.0033  memory: 3518  loss: 0.0789  decode.loss_ce: 0.0507  decode.acc_seg: 97.0610  aux.loss_ce: 0.0282  aux.acc_seg: 96.8779
+2023/06/14 20:35:41 - mmengine - INFO - Iter(train) [16200/40000]  lr: 6.3045e-03  eta: 4:37:33  time: 0.6913  data_time: 0.0036  memory: 3518  loss: 0.0776  decode.loss_ce: 0.0541  decode.acc_seg: 98.3093  aux.loss_ce: 0.0235  aux.acc_seg: 98.2293
+2023/06/14 20:36:15 - mmengine - INFO - Iter(train) [16250/40000]  lr: 6.2928e-03  eta: 4:36:57  time: 0.6936  data_time: 0.0039  memory: 3518  loss: 0.0906  decode.loss_ce: 0.0623  decode.acc_seg: 97.2418  aux.loss_ce: 0.0283  aux.acc_seg: 97.0932
+2023/06/14 20:36:50 - mmengine - INFO - Iter(train) [16300/40000]  lr: 6.2811e-03  eta: 4:36:22  time: 0.6971  data_time: 0.0051  memory: 3518  loss: 0.0506  decode.loss_ce: 0.0344  decode.acc_seg: 97.3735  aux.loss_ce: 0.0161  aux.acc_seg: 97.3794
+2023/06/14 20:37:25 - mmengine - INFO - Iter(train) [16350/40000]  lr: 6.2693e-03  eta: 4:35:46  time: 0.6911  data_time: 0.0034  memory: 3518  loss: 0.0602  decode.loss_ce: 0.0425  decode.acc_seg: 98.3860  aux.loss_ce: 0.0177  aux.acc_seg: 98.3747
+2023/06/14 20:37:59 - mmengine - INFO - Iter(train) [16400/40000]  lr: 6.2576e-03  eta: 4:35:11  time: 0.6926  data_time: 0.0037  memory: 3518  loss: 0.0943  decode.loss_ce: 0.0658  decode.acc_seg: 97.6124  aux.loss_ce: 0.0285  aux.acc_seg: 97.5976
+2023/06/14 20:37:59 - mmengine - INFO - Saving checkpoint at 16400 iterations
+2023/06/14 20:38:13 - mmengine - INFO - per class results:
+2023/06/14 20:38:13 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.71 |  98.0 |
+|   green    | 88.82 | 89.16 |
+|   white    | 83.61 | 97.22 |
+| seed-black |  73.1 | 85.98 |
+| seed-white | 57.43 | 63.17 |
++------------+-------+-------+
+2023/06/14 20:38:13 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.0700  mIoU: 79.9300  mAcc: 86.7100  data_time: 0.0113  time: 0.5337
+2023/06/14 20:38:48 - mmengine - INFO - Iter(train) [16450/40000]  lr: 6.2459e-03  eta: 4:34:36  time: 0.7009  data_time: 0.0061  memory: 3518  loss: 0.0501  decode.loss_ce: 0.0342  decode.acc_seg: 99.1250  aux.loss_ce: 0.0159  aux.acc_seg: 99.0598
+2023/06/14 20:39:23 - mmengine - INFO - Iter(train) [16500/40000]  lr: 6.2341e-03  eta: 4:34:01  time: 0.6961  data_time: 0.0044  memory: 3518  loss: 0.0779  decode.loss_ce: 0.0535  decode.acc_seg: 97.4650  aux.loss_ce: 0.0244  aux.acc_seg: 97.5463
+2023/06/14 20:39:58 - mmengine - INFO - Iter(train) [16550/40000]  lr: 6.2224e-03  eta: 4:33:25  time: 0.6933  data_time: 0.0041  memory: 3518  loss: 0.0658  decode.loss_ce: 0.0450  decode.acc_seg: 96.3265  aux.loss_ce: 0.0208  aux.acc_seg: 96.1641
+2023/06/14 20:40:33 - mmengine - INFO - Iter(train) [16600/40000]  lr: 6.2106e-03  eta: 4:32:50  time: 0.6919  data_time: 0.0039  memory: 3518  loss: 0.0885  decode.loss_ce: 0.0560  decode.acc_seg: 98.2302  aux.loss_ce: 0.0325  aux.acc_seg: 98.2521
+2023/06/14 20:41:07 - mmengine - INFO - Iter(train) [16650/40000]  lr: 6.1989e-03  eta: 4:32:14  time: 0.6924  data_time: 0.0036  memory: 3518  loss: 0.0580  decode.loss_ce: 0.0403  decode.acc_seg: 96.8458  aux.loss_ce: 0.0177  aux.acc_seg: 97.0804
+2023/06/14 20:41:42 - mmengine - INFO - Iter(train) [16700/40000]  lr: 6.1871e-03  eta: 4:31:39  time: 0.6899  data_time: 0.0037  memory: 3518  loss: 0.0754  decode.loss_ce: 0.0512  decode.acc_seg: 97.3514  aux.loss_ce: 0.0242  aux.acc_seg: 96.6432
+2023/06/14 20:42:16 - mmengine - INFO - Iter(train) [16750/40000]  lr: 6.1754e-03  eta: 4:31:03  time: 0.6904  data_time: 0.0035  memory: 3518  loss: 0.0639  decode.loss_ce: 0.0427  decode.acc_seg: 97.5950  aux.loss_ce: 0.0212  aux.acc_seg: 97.8282
+2023/06/14 20:42:51 - mmengine - INFO - Iter(train) [16800/40000]  lr: 6.1636e-03  eta: 4:30:27  time: 0.6905  data_time: 0.0032  memory: 3518  loss: 0.0664  decode.loss_ce: 0.0451  decode.acc_seg: 97.7980  aux.loss_ce: 0.0213  aux.acc_seg: 98.0440
+2023/06/14 20:42:51 - mmengine - INFO - Saving checkpoint at 16800 iterations
+2023/06/14 20:43:05 - mmengine - INFO - per class results:
+2023/06/14 20:43:05 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.93 | 98.92 |
+|   green    | 96.04 | 96.69 |
+|   white    | 89.58 | 94.36 |
+| seed-black | 73.47 | 83.88 |
+| seed-white | 58.43 | 64.42 |
++------------+-------+-------+
+2023/06/14 20:43:05 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.4200  mIoU: 82.8900  mAcc: 87.6500  data_time: 0.0113  time: 0.5350
+2023/06/14 20:43:40 - mmengine - INFO - Iter(train) [16850/40000]  lr: 6.1518e-03  eta: 4:29:52  time: 0.6917  data_time: 0.0036  memory: 3518  loss: 0.0682  decode.loss_ce: 0.0475  decode.acc_seg: 97.5674  aux.loss_ce: 0.0207  aux.acc_seg: 95.4795
+2023/06/14 20:44:14 - mmengine - INFO - Iter(train) [16900/40000]  lr: 6.1401e-03  eta: 4:29:16  time: 0.6916  data_time: 0.0038  memory: 3518  loss: 0.0569  decode.loss_ce: 0.0388  decode.acc_seg: 98.6062  aux.loss_ce: 0.0182  aux.acc_seg: 97.9357
+2023/06/14 20:44:49 - mmengine - INFO - Iter(train) [16950/40000]  lr: 6.1283e-03  eta: 4:28:41  time: 0.6902  data_time: 0.0036  memory: 3518  loss: 0.0600  decode.loss_ce: 0.0412  decode.acc_seg: 97.3514  aux.loss_ce: 0.0189  aux.acc_seg: 96.9351
+2023/06/14 20:45:23 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 20:45:23 - mmengine - INFO - Iter(train) [17000/40000]  lr: 6.1165e-03  eta: 4:28:05  time: 0.6910  data_time: 0.0035  memory: 3518  loss: 0.0646  decode.loss_ce: 0.0446  decode.acc_seg: 97.4357  aux.loss_ce: 0.0200  aux.acc_seg: 97.1455
+2023/06/14 20:45:58 - mmengine - INFO - Iter(train) [17050/40000]  lr: 6.1048e-03  eta: 4:27:30  time: 0.6923  data_time: 0.0040  memory: 3518  loss: 0.0912  decode.loss_ce: 0.0587  decode.acc_seg: 97.9502  aux.loss_ce: 0.0324  aux.acc_seg: 97.7563
+2023/06/14 20:46:33 - mmengine - INFO - Iter(train) [17100/40000]  lr: 6.0930e-03  eta: 4:26:55  time: 0.6897  data_time: 0.0033  memory: 3518  loss: 0.0651  decode.loss_ce: 0.0453  decode.acc_seg: 93.3865  aux.loss_ce: 0.0198  aux.acc_seg: 94.7195
+2023/06/14 20:47:07 - mmengine - INFO - Iter(train) [17150/40000]  lr: 6.0812e-03  eta: 4:26:19  time: 0.6936  data_time: 0.0044  memory: 3518  loss: 0.0857  decode.loss_ce: 0.0571  decode.acc_seg: 96.3880  aux.loss_ce: 0.0287  aux.acc_seg: 96.7187
+2023/06/14 20:47:42 - mmengine - INFO - Iter(train) [17200/40000]  lr: 6.0694e-03  eta: 4:25:44  time: 0.6912  data_time: 0.0036  memory: 3518  loss: 0.0931  decode.loss_ce: 0.0644  decode.acc_seg: 86.7509  aux.loss_ce: 0.0287  aux.acc_seg: 90.6446
+2023/06/14 20:47:42 - mmengine - INFO - Saving checkpoint at 17200 iterations
+2023/06/14 20:47:56 - mmengine - INFO - per class results:
+2023/06/14 20:47:56 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.95 | 98.27 |
+|   green    | 95.94 | 96.45 |
+|   white    | 89.19 | 96.67 |
+| seed-black | 72.41 | 85.76 |
+| seed-white |  53.8 | 58.17 |
++------------+-------+-------+
+2023/06/14 20:47:56 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.3400  mIoU: 81.6600  mAcc: 87.0600  data_time: 0.0131  time: 0.5300
+2023/06/14 20:48:31 - mmengine - INFO - Iter(train) [17250/40000]  lr: 6.0576e-03  eta: 4:25:08  time: 0.6958  data_time: 0.0051  memory: 3518  loss: 0.0700  decode.loss_ce: 0.0472  decode.acc_seg: 95.9525  aux.loss_ce: 0.0228  aux.acc_seg: 95.3184
+2023/06/14 20:49:05 - mmengine - INFO - Iter(train) [17300/40000]  lr: 6.0459e-03  eta: 4:24:33  time: 0.6969  data_time: 0.0054  memory: 3518  loss: 0.0692  decode.loss_ce: 0.0448  decode.acc_seg: 99.3327  aux.loss_ce: 0.0245  aux.acc_seg: 99.3206
+2023/06/14 20:49:40 - mmengine - INFO - Iter(train) [17350/40000]  lr: 6.0341e-03  eta: 4:23:58  time: 0.6911  data_time: 0.0034  memory: 3518  loss: 0.0605  decode.loss_ce: 0.0405  decode.acc_seg: 97.0138  aux.loss_ce: 0.0200  aux.acc_seg: 96.8539
+2023/06/14 20:50:15 - mmengine - INFO - Iter(train) [17400/40000]  lr: 6.0223e-03  eta: 4:23:22  time: 0.6920  data_time: 0.0040  memory: 3518  loss: 0.0655  decode.loss_ce: 0.0438  decode.acc_seg: 97.1806  aux.loss_ce: 0.0217  aux.acc_seg: 97.3065
+2023/06/14 20:50:49 - mmengine - INFO - Iter(train) [17450/40000]  lr: 6.0105e-03  eta: 4:22:47  time: 0.6918  data_time: 0.0038  memory: 3518  loss: 0.0630  decode.loss_ce: 0.0437  decode.acc_seg: 97.9446  aux.loss_ce: 0.0193  aux.acc_seg: 97.9769
+2023/06/14 20:51:24 - mmengine - INFO - Iter(train) [17500/40000]  lr: 5.9987e-03  eta: 4:22:11  time: 0.6894  data_time: 0.0033  memory: 3518  loss: 0.0634  decode.loss_ce: 0.0431  decode.acc_seg: 98.3464  aux.loss_ce: 0.0203  aux.acc_seg: 98.3165
+2023/06/14 20:51:58 - mmengine - INFO - Iter(train) [17550/40000]  lr: 5.9869e-03  eta: 4:21:36  time: 0.6915  data_time: 0.0035  memory: 3518  loss: 0.0676  decode.loss_ce: 0.0450  decode.acc_seg: 97.7222  aux.loss_ce: 0.0225  aux.acc_seg: 97.3324
+2023/06/14 20:52:33 - mmengine - INFO - Iter(train) [17600/40000]  lr: 5.9751e-03  eta: 4:21:01  time: 0.6913  data_time: 0.0033  memory: 3518  loss: 0.0517  decode.loss_ce: 0.0352  decode.acc_seg: 98.8872  aux.loss_ce: 0.0164  aux.acc_seg: 98.7584
+2023/06/14 20:52:33 - mmengine - INFO - Saving checkpoint at 17600 iterations
+2023/06/14 20:52:47 - mmengine - INFO - per class results:
+2023/06/14 20:52:47 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 97.25 | 99.19 |
+|   green    | 96.76 | 97.14 |
+|   white    | 90.76 | 94.43 |
+| seed-black | 75.45 | 86.99 |
+| seed-white | 51.05 | 57.21 |
++------------+-------+-------+
+2023/06/14 20:52:47 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.7000  mIoU: 82.2500  mAcc: 86.9900  data_time: 0.0113  time: 0.5239
+2023/06/14 20:52:47 - mmengine - INFO - The previous best checkpoint E:\AIsecond\second_mmseg\mmsegmentation\work_dirs\PSPnet_Citrullus_finetune\best_aAcc_iter_13200.pth is removed
+2023/06/14 20:52:53 - mmengine - INFO - The best checkpoint with 97.7000 aAcc at 17600 iter is saved to best_aAcc_iter_17600.pth.
+2023/06/14 20:53:28 - mmengine - INFO - Iter(train) [17650/40000]  lr: 5.9633e-03  eta: 4:20:33  time: 0.6924  data_time: 0.0041  memory: 3518  loss: 0.0492  decode.loss_ce: 0.0337  decode.acc_seg: 98.1235  aux.loss_ce: 0.0155  aux.acc_seg: 97.8324
+2023/06/14 20:54:02 - mmengine - INFO - Iter(train) [17700/40000]  lr: 5.9515e-03  eta: 4:19:57  time: 0.6918  data_time: 0.0042  memory: 3518  loss: 0.0502  decode.loss_ce: 0.0343  decode.acc_seg: 97.6443  aux.loss_ce: 0.0158  aux.acc_seg: 97.6913
+2023/06/14 20:54:37 - mmengine - INFO - Iter(train) [17750/40000]  lr: 5.9397e-03  eta: 4:19:22  time: 0.6926  data_time: 0.0040  memory: 3518  loss: 0.0548  decode.loss_ce: 0.0381  decode.acc_seg: 97.6117  aux.loss_ce: 0.0167  aux.acc_seg: 97.5543
+2023/06/14 20:55:12 - mmengine - INFO - Iter(train) [17800/40000]  lr: 5.9279e-03  eta: 4:18:46  time: 0.6901  data_time: 0.0037  memory: 3518  loss: 0.0592  decode.loss_ce: 0.0410  decode.acc_seg: 97.9911  aux.loss_ce: 0.0182  aux.acc_seg: 98.0098
+2023/06/14 20:55:46 - mmengine - INFO - Iter(train) [17850/40000]  lr: 5.9160e-03  eta: 4:18:11  time: 0.6925  data_time: 0.0034  memory: 3518  loss: 0.0835  decode.loss_ce: 0.0577  decode.acc_seg: 98.1374  aux.loss_ce: 0.0258  aux.acc_seg: 97.7079
+2023/06/14 20:56:21 - mmengine - INFO - Iter(train) [17900/40000]  lr: 5.9042e-03  eta: 4:17:36  time: 0.6910  data_time: 0.0040  memory: 3518  loss: 0.0972  decode.loss_ce: 0.0655  decode.acc_seg: 96.0159  aux.loss_ce: 0.0317  aux.acc_seg: 95.6298
+2023/06/14 20:56:55 - mmengine - INFO - Iter(train) [17950/40000]  lr: 5.8924e-03  eta: 4:17:00  time: 0.6924  data_time: 0.0045  memory: 3518  loss: 0.0528  decode.loss_ce: 0.0355  decode.acc_seg: 98.6359  aux.loss_ce: 0.0174  aux.acc_seg: 98.3947
+2023/06/14 20:57:30 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 20:57:30 - mmengine - INFO - Iter(train) [18000/40000]  lr: 5.8806e-03  eta: 4:16:25  time: 0.6907  data_time: 0.0034  memory: 3518  loss: 0.0610  decode.loss_ce: 0.0423  decode.acc_seg: 97.0532  aux.loss_ce: 0.0187  aux.acc_seg: 97.2087
+2023/06/14 20:57:30 - mmengine - INFO - Saving checkpoint at 18000 iterations
+2023/06/14 20:57:44 - mmengine - INFO - per class results:
+2023/06/14 20:57:44 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.62 | 98.56 |
+|   green    | 94.26 | 96.74 |
+|   white    | 86.26 | 92.45 |
+| seed-black | 74.47 | 87.78 |
+| seed-white | 34.49 | 35.27 |
++------------+-------+-------+
+2023/06/14 20:57:44 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.8000  mIoU: 77.2200  mAcc: 82.1600  data_time: 0.0117  time: 0.5303
+2023/06/14 20:58:19 - mmengine - INFO - Iter(train) [18050/40000]  lr: 5.8688e-03  eta: 4:15:49  time: 0.6958  data_time: 0.0042  memory: 3518  loss: 0.0837  decode.loss_ce: 0.0565  decode.acc_seg: 96.3127  aux.loss_ce: 0.0271  aux.acc_seg: 95.7442
+2023/06/14 20:58:53 - mmengine - INFO - Iter(train) [18100/40000]  lr: 5.8569e-03  eta: 4:15:14  time: 0.6978  data_time: 0.0046  memory: 3518  loss: 0.0994  decode.loss_ce: 0.0675  decode.acc_seg: 96.7791  aux.loss_ce: 0.0319  aux.acc_seg: 97.5426
+2023/06/14 20:59:28 - mmengine - INFO - Iter(train) [18150/40000]  lr: 5.8451e-03  eta: 4:14:39  time: 0.6916  data_time: 0.0037  memory: 3518  loss: 0.0761  decode.loss_ce: 0.0529  decode.acc_seg: 97.4222  aux.loss_ce: 0.0232  aux.acc_seg: 97.4342
+2023/06/14 21:00:03 - mmengine - INFO - Iter(train) [18200/40000]  lr: 5.8333e-03  eta: 4:14:04  time: 0.6936  data_time: 0.0041  memory: 3518  loss: 0.0771  decode.loss_ce: 0.0515  decode.acc_seg: 98.2446  aux.loss_ce: 0.0256  aux.acc_seg: 98.3802
+2023/06/14 21:00:38 - mmengine - INFO - Iter(train) [18250/40000]  lr: 5.8214e-03  eta: 4:13:29  time: 0.6925  data_time: 0.0037  memory: 3518  loss: 0.0966  decode.loss_ce: 0.0658  decode.acc_seg: 97.5905  aux.loss_ce: 0.0309  aux.acc_seg: 97.6956
+2023/06/14 21:01:12 - mmengine - INFO - Iter(train) [18300/40000]  lr: 5.8096e-03  eta: 4:12:53  time: 0.6962  data_time: 0.0048  memory: 3518  loss: 0.0599  decode.loss_ce: 0.0416  decode.acc_seg: 94.9724  aux.loss_ce: 0.0182  aux.acc_seg: 95.4665
+2023/06/14 21:01:47 - mmengine - INFO - Iter(train) [18350/40000]  lr: 5.7977e-03  eta: 4:12:18  time: 0.6915  data_time: 0.0037  memory: 3518  loss: 0.0508  decode.loss_ce: 0.0350  decode.acc_seg: 98.3875  aux.loss_ce: 0.0158  aux.acc_seg: 98.3807
+2023/06/14 21:02:22 - mmengine - INFO - Iter(train) [18400/40000]  lr: 5.7859e-03  eta: 4:11:43  time: 0.6915  data_time: 0.0035  memory: 3518  loss: 0.0689  decode.loss_ce: 0.0459  decode.acc_seg: 97.5730  aux.loss_ce: 0.0231  aux.acc_seg: 97.5209
+2023/06/14 21:02:22 - mmengine - INFO - Saving checkpoint at 18400 iterations
+2023/06/14 21:02:36 - mmengine - INFO - per class results:
+2023/06/14 21:02:36 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 97.02 | 99.06 |
+|   green    | 96.86 | 97.67 |
+|   white    | 89.63 | 93.64 |
+| seed-black | 74.68 | 84.48 |
+| seed-white | 59.22 | 61.79 |
++------------+-------+-------+
+2023/06/14 21:02:36 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.5500  mIoU: 83.4800  mAcc: 87.3300  data_time: 0.0126  time: 0.5322
+2023/06/14 21:03:10 - mmengine - INFO - Iter(train) [18450/40000]  lr: 5.7741e-03  eta: 4:11:07  time: 0.6932  data_time: 0.0038  memory: 3518  loss: 0.0704  decode.loss_ce: 0.0491  decode.acc_seg: 97.2897  aux.loss_ce: 0.0212  aux.acc_seg: 96.7599
+2023/06/14 21:03:45 - mmengine - INFO - Iter(train) [18500/40000]  lr: 5.7622e-03  eta: 4:10:32  time: 0.6932  data_time: 0.0037  memory: 3518  loss: 0.0811  decode.loss_ce: 0.0508  decode.acc_seg: 97.0754  aux.loss_ce: 0.0303  aux.acc_seg: 96.8141
+2023/06/14 21:04:20 - mmengine - INFO - Iter(train) [18550/40000]  lr: 5.7504e-03  eta: 4:09:57  time: 0.6949  data_time: 0.0044  memory: 3518  loss: 0.0572  decode.loss_ce: 0.0390  decode.acc_seg: 97.7473  aux.loss_ce: 0.0182  aux.acc_seg: 97.4223
+2023/06/14 21:04:54 - mmengine - INFO - Iter(train) [18600/40000]  lr: 5.7385e-03  eta: 4:09:21  time: 0.6913  data_time: 0.0034  memory: 3518  loss: 0.0796  decode.loss_ce: 0.0543  decode.acc_seg: 97.1421  aux.loss_ce: 0.0253  aux.acc_seg: 97.1216
+2023/06/14 21:05:29 - mmengine - INFO - Iter(train) [18650/40000]  lr: 5.7266e-03  eta: 4:08:46  time: 0.6921  data_time: 0.0034  memory: 3518  loss: 0.0668  decode.loss_ce: 0.0430  decode.acc_seg: 97.7528  aux.loss_ce: 0.0237  aux.acc_seg: 97.8805
+2023/06/14 21:06:04 - mmengine - INFO - Iter(train) [18700/40000]  lr: 5.7148e-03  eta: 4:08:11  time: 0.6924  data_time: 0.0033  memory: 3518  loss: 0.1077  decode.loss_ce: 0.0740  decode.acc_seg: 98.6136  aux.loss_ce: 0.0337  aux.acc_seg: 98.5355
+2023/06/14 21:06:38 - mmengine - INFO - Iter(train) [18750/40000]  lr: 5.7029e-03  eta: 4:07:35  time: 0.6936  data_time: 0.0036  memory: 3518  loss: 0.0740  decode.loss_ce: 0.0512  decode.acc_seg: 96.8642  aux.loss_ce: 0.0228  aux.acc_seg: 96.2824
+2023/06/14 21:07:13 - mmengine - INFO - Iter(train) [18800/40000]  lr: 5.6910e-03  eta: 4:07:00  time: 0.6928  data_time: 0.0039  memory: 3518  loss: 0.0536  decode.loss_ce: 0.0379  decode.acc_seg: 97.0683  aux.loss_ce: 0.0158  aux.acc_seg: 97.1449
+2023/06/14 21:07:13 - mmengine - INFO - Saving checkpoint at 18800 iterations
+2023/06/14 21:07:28 - mmengine - INFO - per class results:
+2023/06/14 21:07:28 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.98 | 99.07 |
+|   green    | 94.35 | 96.61 |
+|   white    | 87.73 | 92.18 |
+| seed-black | 74.76 | 85.55 |
+| seed-white | 48.69 | 52.75 |
++------------+-------+-------+
+2023/06/14 21:07:28 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.1100  mIoU: 80.5000  mAcc: 85.2300  data_time: 0.0123  time: 0.5288
+2023/06/14 21:08:03 - mmengine - INFO - Iter(train) [18850/40000]  lr: 5.6792e-03  eta: 4:06:25  time: 0.6947  data_time: 0.0041  memory: 3518  loss: 0.0565  decode.loss_ce: 0.0378  decode.acc_seg: 99.0065  aux.loss_ce: 0.0187  aux.acc_seg: 99.0659
+2023/06/14 21:08:38 - mmengine - INFO - Iter(train) [18900/40000]  lr: 5.6673e-03  eta: 4:05:50  time: 0.7038  data_time: 0.0063  memory: 3518  loss: 0.0790  decode.loss_ce: 0.0558  decode.acc_seg: 97.2126  aux.loss_ce: 0.0232  aux.acc_seg: 97.2419
+2023/06/14 21:09:13 - mmengine - INFO - Iter(train) [18950/40000]  lr: 5.6554e-03  eta: 4:05:15  time: 0.7042  data_time: 0.0063  memory: 3518  loss: 0.0707  decode.loss_ce: 0.0482  decode.acc_seg: 97.4741  aux.loss_ce: 0.0225  aux.acc_seg: 97.9127
+2023/06/14 21:09:48 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 21:09:48 - mmengine - INFO - Iter(train) [19000/40000]  lr: 5.6436e-03  eta: 4:04:41  time: 0.7014  data_time: 0.0060  memory: 3518  loss: 0.0645  decode.loss_ce: 0.0441  decode.acc_seg: 98.1721  aux.loss_ce: 0.0203  aux.acc_seg: 97.8608
+2023/06/14 21:10:23 - mmengine - INFO - Iter(train) [19050/40000]  lr: 5.6317e-03  eta: 4:04:05  time: 0.6968  data_time: 0.0046  memory: 3518  loss: 0.0582  decode.loss_ce: 0.0398  decode.acc_seg: 97.3680  aux.loss_ce: 0.0184  aux.acc_seg: 97.4608
+2023/06/14 21:10:58 - mmengine - INFO - Iter(train) [19100/40000]  lr: 5.6198e-03  eta: 4:03:30  time: 0.6959  data_time: 0.0042  memory: 3518  loss: 0.0812  decode.loss_ce: 0.0554  decode.acc_seg: 97.3895  aux.loss_ce: 0.0258  aux.acc_seg: 97.6465
+2023/06/14 21:11:32 - mmengine - INFO - Iter(train) [19150/40000]  lr: 5.6079e-03  eta: 4:02:55  time: 0.6963  data_time: 0.0046  memory: 3518  loss: 0.0790  decode.loss_ce: 0.0546  decode.acc_seg: 98.0876  aux.loss_ce: 0.0244  aux.acc_seg: 98.3612
+2023/06/14 21:12:07 - mmengine - INFO - Iter(train) [19200/40000]  lr: 5.5960e-03  eta: 4:02:20  time: 0.7016  data_time: 0.0056  memory: 3518  loss: 0.0567  decode.loss_ce: 0.0385  decode.acc_seg: 98.0962  aux.loss_ce: 0.0182  aux.acc_seg: 97.6492
+2023/06/14 21:12:07 - mmengine - INFO - Saving checkpoint at 19200 iterations
+2023/06/14 21:12:24 - mmengine - INFO - per class results:
+2023/06/14 21:12:24 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.71 | 98.56 |
+|   green    | 95.37 | 96.63 |
+|   white    | 88.07 | 94.56 |
+| seed-black | 75.88 | 86.99 |
+| seed-white | 29.27 |  29.7 |
++------------+-------+-------+
+2023/06/14 21:12:24 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.1000  mIoU: 77.0600  mAcc: 81.2900  data_time: 0.0169  time: 0.5393
+2023/06/14 21:12:59 - mmengine - INFO - Iter(train) [19250/40000]  lr: 5.5841e-03  eta: 4:01:45  time: 0.6951  data_time: 0.0043  memory: 3518  loss: 0.0568  decode.loss_ce: 0.0396  decode.acc_seg: 96.8205  aux.loss_ce: 0.0172  aux.acc_seg: 96.6368
+2023/06/14 21:13:34 - mmengine - INFO - Iter(train) [19300/40000]  lr: 5.5722e-03  eta: 4:01:10  time: 0.6943  data_time: 0.0044  memory: 3518  loss: 0.0630  decode.loss_ce: 0.0440  decode.acc_seg: 98.1280  aux.loss_ce: 0.0190  aux.acc_seg: 97.7469
+2023/06/14 21:14:09 - mmengine - INFO - Iter(train) [19350/40000]  lr: 5.5603e-03  eta: 4:00:35  time: 0.6961  data_time: 0.0045  memory: 3518  loss: 0.0600  decode.loss_ce: 0.0401  decode.acc_seg: 98.4838  aux.loss_ce: 0.0199  aux.acc_seg: 97.7627
+2023/06/14 21:14:43 - mmengine - INFO - Iter(train) [19400/40000]  lr: 5.5484e-03  eta: 4:00:00  time: 0.6945  data_time: 0.0045  memory: 3518  loss: 0.0784  decode.loss_ce: 0.0528  decode.acc_seg: 97.9537  aux.loss_ce: 0.0256  aux.acc_seg: 97.7465
+2023/06/14 21:15:18 - mmengine - INFO - Iter(train) [19450/40000]  lr: 5.5365e-03  eta: 3:59:25  time: 0.6967  data_time: 0.0050  memory: 3518  loss: 0.0622  decode.loss_ce: 0.0427  decode.acc_seg: 97.0884  aux.loss_ce: 0.0195  aux.acc_seg: 96.5754
+2023/06/14 21:15:53 - mmengine - INFO - Iter(train) [19500/40000]  lr: 5.5246e-03  eta: 3:58:49  time: 0.6948  data_time: 0.0042  memory: 3518  loss: 0.0723  decode.loss_ce: 0.0502  decode.acc_seg: 97.5970  aux.loss_ce: 0.0222  aux.acc_seg: 97.4788
+2023/06/14 21:16:28 - mmengine - INFO - Iter(train) [19550/40000]  lr: 5.5127e-03  eta: 3:58:14  time: 0.6959  data_time: 0.0047  memory: 3518  loss: 0.0686  decode.loss_ce: 0.0474  decode.acc_seg: 98.8741  aux.loss_ce: 0.0211  aux.acc_seg: 98.6877
+2023/06/14 21:17:03 - mmengine - INFO - Iter(train) [19600/40000]  lr: 5.5008e-03  eta: 3:57:39  time: 0.6943  data_time: 0.0042  memory: 3518  loss: 0.0634  decode.loss_ce: 0.0435  decode.acc_seg: 97.5812  aux.loss_ce: 0.0199  aux.acc_seg: 96.9919
+2023/06/14 21:17:03 - mmengine - INFO - Saving checkpoint at 19600 iterations
+2023/06/14 21:17:17 - mmengine - INFO - per class results:
+2023/06/14 21:17:17 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 95.83 | 99.44 |
+|   green    | 96.48 | 96.87 |
+|   white    |  85.5 | 88.78 |
+| seed-black | 74.36 | 84.68 |
+| seed-white | 15.85 | 15.92 |
++------------+-------+-------+
+2023/06/14 21:17:17 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.6500  mIoU: 73.6100  mAcc: 77.1400  data_time: 0.0126  time: 0.5260
+2023/06/14 21:17:52 - mmengine - INFO - Iter(train) [19650/40000]  lr: 5.4889e-03  eta: 3:57:04  time: 0.6945  data_time: 0.0042  memory: 3518  loss: 0.0649  decode.loss_ce: 0.0446  decode.acc_seg: 96.5656  aux.loss_ce: 0.0203  aux.acc_seg: 96.9511
+2023/06/14 21:18:27 - mmengine - INFO - Iter(train) [19700/40000]  lr: 5.4770e-03  eta: 3:56:29  time: 0.6992  data_time: 0.0055  memory: 3518  loss: 0.0628  decode.loss_ce: 0.0432  decode.acc_seg: 97.9264  aux.loss_ce: 0.0196  aux.acc_seg: 97.2842
+2023/06/14 21:19:02 - mmengine - INFO - Iter(train) [19750/40000]  lr: 5.4650e-03  eta: 3:55:54  time: 0.7056  data_time: 0.0060  memory: 3518  loss: 0.0896  decode.loss_ce: 0.0616  decode.acc_seg: 97.0101  aux.loss_ce: 0.0280  aux.acc_seg: 96.0007
+2023/06/14 21:19:37 - mmengine - INFO - Iter(train) [19800/40000]  lr: 5.4531e-03  eta: 3:55:19  time: 0.6970  data_time: 0.0055  memory: 3518  loss: 0.0659  decode.loss_ce: 0.0449  decode.acc_seg: 97.8269  aux.loss_ce: 0.0209  aux.acc_seg: 97.9294
+2023/06/14 21:20:12 - mmengine - INFO - Iter(train) [19850/40000]  lr: 5.4412e-03  eta: 3:54:44  time: 0.6938  data_time: 0.0039  memory: 3518  loss: 0.0596  decode.loss_ce: 0.0407  decode.acc_seg: 97.8336  aux.loss_ce: 0.0189  aux.acc_seg: 98.3545
+2023/06/14 21:20:47 - mmengine - INFO - Iter(train) [19900/40000]  lr: 5.4293e-03  eta: 3:54:09  time: 0.6987  data_time: 0.0059  memory: 3518  loss: 0.0602  decode.loss_ce: 0.0413  decode.acc_seg: 96.8363  aux.loss_ce: 0.0189  aux.acc_seg: 96.3840
+2023/06/14 21:21:22 - mmengine - INFO - Iter(train) [19950/40000]  lr: 5.4173e-03  eta: 3:53:34  time: 0.6948  data_time: 0.0046  memory: 3518  loss: 0.0613  decode.loss_ce: 0.0409  decode.acc_seg: 98.4066  aux.loss_ce: 0.0204  aux.acc_seg: 98.2358
+2023/06/14 21:21:56 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 21:21:56 - mmengine - INFO - Iter(train) [20000/40000]  lr: 5.4054e-03  eta: 3:52:59  time: 0.6961  data_time: 0.0043  memory: 3518  loss: 0.0777  decode.loss_ce: 0.0536  decode.acc_seg: 96.6764  aux.loss_ce: 0.0241  aux.acc_seg: 96.6147
+2023/06/14 21:21:56 - mmengine - INFO - Saving checkpoint at 20000 iterations
+2023/06/14 21:22:11 - mmengine - INFO - per class results:
+2023/06/14 21:22:11 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 97.09 | 98.89 |
+|   green    | 96.83 | 98.02 |
+|   white    | 89.86 | 94.14 |
+| seed-black |  76.3 | 86.54 |
+| seed-white | 56.86 |  58.8 |
++------------+-------+-------+
+2023/06/14 21:22:11 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.6000  mIoU: 83.3900  mAcc: 87.2800  data_time: 0.0147  time: 0.5260
+2023/06/14 21:22:46 - mmengine - INFO - Iter(train) [20050/40000]  lr: 5.3935e-03  eta: 3:52:24  time: 0.6962  data_time: 0.0046  memory: 3518  loss: 0.0545  decode.loss_ce: 0.0385  decode.acc_seg: 97.4007  aux.loss_ce: 0.0160  aux.acc_seg: 97.7620
+2023/06/14 21:23:21 - mmengine - INFO - Iter(train) [20100/40000]  lr: 5.3815e-03  eta: 3:51:49  time: 0.6958  data_time: 0.0049  memory: 3518  loss: 0.0668  decode.loss_ce: 0.0458  decode.acc_seg: 97.5000  aux.loss_ce: 0.0210  aux.acc_seg: 97.4431
+2023/06/14 21:23:56 - mmengine - INFO - Iter(train) [20150/40000]  lr: 5.3696e-03  eta: 3:51:14  time: 0.6975  data_time: 0.0055  memory: 3518  loss: 0.0989  decode.loss_ce: 0.0655  decode.acc_seg: 98.0881  aux.loss_ce: 0.0335  aux.acc_seg: 95.6666
+2023/06/14 21:24:30 - mmengine - INFO - Iter(train) [20200/40000]  lr: 5.3576e-03  eta: 3:50:38  time: 0.6945  data_time: 0.0040  memory: 3518  loss: 0.0525  decode.loss_ce: 0.0363  decode.acc_seg: 98.3788  aux.loss_ce: 0.0162  aux.acc_seg: 98.3592
+2023/06/14 21:25:05 - mmengine - INFO - Iter(train) [20250/40000]  lr: 5.3457e-03  eta: 3:50:03  time: 0.6954  data_time: 0.0047  memory: 3518  loss: 0.0834  decode.loss_ce: 0.0524  decode.acc_seg: 96.5797  aux.loss_ce: 0.0310  aux.acc_seg: 83.4746
+2023/06/14 21:25:40 - mmengine - INFO - Iter(train) [20300/40000]  lr: 5.3337e-03  eta: 3:49:28  time: 0.6956  data_time: 0.0041  memory: 3518  loss: 0.0671  decode.loss_ce: 0.0472  decode.acc_seg: 97.7803  aux.loss_ce: 0.0198  aux.acc_seg: 97.4587
+2023/06/14 21:26:15 - mmengine - INFO - Iter(train) [20350/40000]  lr: 5.3218e-03  eta: 3:48:53  time: 0.6968  data_time: 0.0052  memory: 3518  loss: 0.0633  decode.loss_ce: 0.0435  decode.acc_seg: 97.3428  aux.loss_ce: 0.0198  aux.acc_seg: 97.2739
+2023/06/14 21:26:50 - mmengine - INFO - Iter(train) [20400/40000]  lr: 5.3098e-03  eta: 3:48:18  time: 0.6975  data_time: 0.0054  memory: 3518  loss: 0.0747  decode.loss_ce: 0.0496  decode.acc_seg: 96.6831  aux.loss_ce: 0.0251  aux.acc_seg: 96.7275
+2023/06/14 21:26:50 - mmengine - INFO - Saving checkpoint at 20400 iterations
+2023/06/14 21:27:05 - mmengine - INFO - per class results:
+2023/06/14 21:27:05 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 97.04 | 98.28 |
+|   green    |  95.6 | 97.12 |
+|   white    | 89.19 | 95.71 |
+| seed-black | 73.02 | 89.39 |
+| seed-white | 55.59 | 58.07 |
++------------+-------+-------+
+2023/06/14 21:27:05 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.3500  mIoU: 82.0900  mAcc: 87.7100  data_time: 0.0134  time: 0.5272
+2023/06/14 21:27:39 - mmengine - INFO - Iter(train) [20450/40000]  lr: 5.2978e-03  eta: 3:47:43  time: 0.6971  data_time: 0.0048  memory: 3518  loss: 0.0571  decode.loss_ce: 0.0398  decode.acc_seg: 98.7536  aux.loss_ce: 0.0172  aux.acc_seg: 98.6179
+2023/06/14 21:28:14 - mmengine - INFO - Iter(train) [20500/40000]  lr: 5.2859e-03  eta: 3:47:08  time: 0.6966  data_time: 0.0044  memory: 3518  loss: 0.0665  decode.loss_ce: 0.0451  decode.acc_seg: 96.7941  aux.loss_ce: 0.0215  aux.acc_seg: 96.8442
+2023/06/14 21:28:49 - mmengine - INFO - Iter(train) [20550/40000]  lr: 5.2739e-03  eta: 3:46:33  time: 0.7006  data_time: 0.0059  memory: 3518  loss: 0.0588  decode.loss_ce: 0.0406  decode.acc_seg: 98.2117  aux.loss_ce: 0.0182  aux.acc_seg: 98.3230
+2023/06/14 21:29:25 - mmengine - INFO - Iter(train) [20600/40000]  lr: 5.2619e-03  eta: 3:45:59  time: 0.7383  data_time: 0.0062  memory: 3518  loss: 0.0572  decode.loss_ce: 0.0396  decode.acc_seg: 99.1748  aux.loss_ce: 0.0177  aux.acc_seg: 99.0466
+2023/06/14 21:30:02 - mmengine - INFO - Iter(train) [20650/40000]  lr: 5.2500e-03  eta: 3:45:26  time: 0.7539  data_time: 0.0066  memory: 3518  loss: 0.0670  decode.loss_ce: 0.0426  decode.acc_seg: 96.8186  aux.loss_ce: 0.0244  aux.acc_seg: 96.8524
+2023/06/14 21:30:41 - mmengine - INFO - Iter(train) [20700/40000]  lr: 5.2380e-03  eta: 3:44:55  time: 0.7862  data_time: 0.0077  memory: 3518  loss: 0.0630  decode.loss_ce: 0.0399  decode.acc_seg: 97.0846  aux.loss_ce: 0.0231  aux.acc_seg: 96.5736
+2023/06/14 21:31:20 - mmengine - INFO - Iter(train) [20750/40000]  lr: 5.2260e-03  eta: 3:44:23  time: 0.7760  data_time: 0.0062  memory: 3518  loss: 0.0693  decode.loss_ce: 0.0464  decode.acc_seg: 95.7782  aux.loss_ce: 0.0229  aux.acc_seg: 94.9590
+2023/06/14 21:31:57 - mmengine - INFO - Iter(train) [20800/40000]  lr: 5.2140e-03  eta: 3:43:50  time: 0.6954  data_time: 0.0043  memory: 3518  loss: 0.0595  decode.loss_ce: 0.0410  decode.acc_seg: 98.8428  aux.loss_ce: 0.0185  aux.acc_seg: 98.9667
+2023/06/14 21:31:57 - mmengine - INFO - Saving checkpoint at 20800 iterations
+2023/06/14 21:32:12 - mmengine - INFO - per class results:
+2023/06/14 21:32:12 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.77 | 99.07 |
+|   green    | 96.67 | 97.34 |
+|   white    | 88.81 | 93.17 |
+| seed-black | 76.41 | 85.55 |
+| seed-white | 40.78 | 41.36 |
++------------+-------+-------+
+2023/06/14 21:32:12 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.3500  mIoU: 79.8900  mAcc: 83.3000  data_time: 0.0135  time: 0.5261
+2023/06/14 21:32:48 - mmengine - INFO - Iter(train) [20850/40000]  lr: 5.2020e-03  eta: 3:43:16  time: 0.7400  data_time: 0.0045  memory: 3518  loss: 0.0598  decode.loss_ce: 0.0415  decode.acc_seg: 95.6403  aux.loss_ce: 0.0183  aux.acc_seg: 95.6861
+2023/06/14 21:33:26 - mmengine - INFO - Iter(train) [20900/40000]  lr: 5.1900e-03  eta: 3:42:44  time: 0.7693  data_time: 0.0059  memory: 3518  loss: 0.0608  decode.loss_ce: 0.0407  decode.acc_seg: 97.1646  aux.loss_ce: 0.0201  aux.acc_seg: 97.8164
+2023/06/14 21:34:03 - mmengine - INFO - Iter(train) [20950/40000]  lr: 5.1780e-03  eta: 3:42:11  time: 0.7190  data_time: 0.0038  memory: 3518  loss: 0.0630  decode.loss_ce: 0.0432  decode.acc_seg: 95.3197  aux.loss_ce: 0.0198  aux.acc_seg: 95.1170
+2023/06/14 21:34:40 - mmengine - INFO - Exp name: PSPnet_Citrullus_finetune_20230614_171548
+2023/06/14 21:34:40 - mmengine - INFO - Iter(train) [21000/40000]  lr: 5.1660e-03  eta: 3:41:38  time: 0.7721  data_time: 0.0084  memory: 3518  loss: 0.0609  decode.loss_ce: 0.0399  decode.acc_seg: 97.4503  aux.loss_ce: 0.0210  aux.acc_seg: 97.4041
+2023/06/14 21:35:17 - mmengine - INFO - Iter(train) [21050/40000]  lr: 5.1540e-03  eta: 3:41:05  time: 0.7459  data_time: 0.0048  memory: 3518  loss: 0.0502  decode.loss_ce: 0.0343  decode.acc_seg: 98.2090  aux.loss_ce: 0.0158  aux.acc_seg: 98.2656
+2023/06/14 21:35:54 - mmengine - INFO - Iter(train) [21100/40000]  lr: 5.1420e-03  eta: 3:40:32  time: 0.7642  data_time: 0.0051  memory: 3518  loss: 0.0528  decode.loss_ce: 0.0355  decode.acc_seg: 97.9850  aux.loss_ce: 0.0173  aux.acc_seg: 98.0950
+2023/06/14 21:36:32 - mmengine - INFO - Iter(train) [21150/40000]  lr: 5.1300e-03  eta: 3:39:59  time: 0.7381  data_time: 0.0050  memory: 3518  loss: 0.0597  decode.loss_ce: 0.0411  decode.acc_seg: 96.8203  aux.loss_ce: 0.0186  aux.acc_seg: 96.8564
+2023/06/14 21:37:10 - mmengine - INFO - Iter(train) [21200/40000]  lr: 5.1180e-03  eta: 3:39:27  time: 0.7424  data_time: 0.0048  memory: 3518  loss: 0.0661  decode.loss_ce: 0.0455  decode.acc_seg: 98.3659  aux.loss_ce: 0.0205  aux.acc_seg: 98.2676
+2023/06/14 21:37:10 - mmengine - INFO - Saving checkpoint at 21200 iterations
+2023/06/14 21:37:26 - mmengine - INFO - per class results:
+2023/06/14 21:37:26 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.96 | 98.57 |
+|   green    | 95.86 | 97.07 |
+|   white    | 89.09 | 94.51 |
+| seed-black | 73.98 | 88.54 |
+| seed-white | 60.69 | 68.52 |
++------------+-------+-------+
+2023/06/14 21:37:26 - mmengine - INFO - Iter(val) [11/11]    aAcc: 97.3700  mIoU: 83.3100  mAcc: 89.4400  data_time: 0.0146  time: 0.5722
+2023/06/14 21:38:04 - mmengine - INFO - Iter(train) [21250/40000]  lr: 5.1060e-03  eta: 3:38:55  time: 0.7721  data_time: 0.0080  memory: 3518  loss: 0.0599  decode.loss_ce: 0.0414  decode.acc_seg: 97.2485  aux.loss_ce: 0.0184  aux.acc_seg: 96.7723
+2023/06/14 21:38:43 - mmengine - INFO - Iter(train) [21300/40000]  lr: 5.0940e-03  eta: 3:38:23  time: 0.7610  data_time: 0.0078  memory: 3518  loss: 0.0587  decode.loss_ce: 0.0391  decode.acc_seg: 97.9906  aux.loss_ce: 0.0196  aux.acc_seg: 97.8946
+2023/06/14 21:39:22 - mmengine - INFO - Iter(train) [21350/40000]  lr: 5.0820e-03  eta: 3:37:51  time: 0.7668  data_time: 0.0092  memory: 3518  loss: 0.0739  decode.loss_ce: 0.0473  decode.acc_seg: 98.1957  aux.loss_ce: 0.0266  aux.acc_seg: 98.2242
+2023/06/14 21:40:00 - mmengine - INFO - Iter(train) [21400/40000]  lr: 5.0700e-03  eta: 3:37:19  time: 0.7626  data_time: 0.0066  memory: 3518  loss: 0.0600  decode.loss_ce: 0.0408  decode.acc_seg: 97.4942  aux.loss_ce: 0.0192  aux.acc_seg: 97.8213
+2023/06/14 21:40:38 - mmengine - INFO - Iter(train) [21450/40000]  lr: 5.0579e-03  eta: 3:36:46  time: 0.7602  data_time: 0.0052  memory: 3518  loss: 0.0551  decode.loss_ce: 0.0384  decode.acc_seg: 94.8286  aux.loss_ce: 0.0167  aux.acc_seg: 95.7241
+2023/06/14 21:41:15 - mmengine - INFO - Iter(train) [21500/40000]  lr: 5.0459e-03  eta: 3:36:13  time: 0.7152  data_time: 0.0049  memory: 3518  loss: 0.0702  decode.loss_ce: 0.0478  decode.acc_seg: 95.5593  aux.loss_ce: 0.0224  aux.acc_seg: 94.7026
+2023/06/14 21:41:53 - mmengine - INFO - Iter(train) [21550/40000]  lr: 5.0339e-03  eta: 3:35:40  time: 0.7540  data_time: 0.0053  memory: 3518  loss: 0.0672  decode.loss_ce: 0.0476  decode.acc_seg: 97.5667  aux.loss_ce: 0.0196  aux.acc_seg: 97.9320
+2023/06/14 21:42:31 - mmengine - INFO - Iter(train) [21600/40000]  lr: 5.0218e-03  eta: 3:35:08  time: 0.7674  data_time: 0.0064  memory: 3518  loss: 0.0687  decode.loss_ce: 0.0461  decode.acc_seg: 95.7257  aux.loss_ce: 0.0226  aux.acc_seg: 95.4790
+2023/06/14 21:42:31 - mmengine - INFO - Saving checkpoint at 21600 iterations
+2023/06/14 21:42:47 - mmengine - INFO - per class results:
+2023/06/14 21:42:47 - mmengine - INFO - 
++------------+-------+-------+
+|   Class    |  IoU  |  Acc  |
++------------+-------+-------+
+|    red     | 96.41 | 99.19 |
+|   green    | 95.29 | 95.75 |
+|   white    | 86.93 | 91.01 |
+| seed-black | 74.21 | 88.27 |
+| seed-white | 55.82 | 63.22 |
++------------+-------+-------+
+2023/06/14 21:42:47 - mmengine - INFO - Iter(val) [11/11]    aAcc: 96.9400  mIoU: 81.7300  mAcc: 87.4900  data_time: 0.0154  time: 0.5807
+2023/06/14 21:43:24 - mmengine - INFO - Iter(train) [21650/40000]  lr: 5.0098e-03  eta: 3:34:34  time: 0.7104  data_time: 0.0039  memory: 3518  loss: 0.0720  decode.loss_ce: 0.0479  decode.acc_seg: 95.7265  aux.loss_ce: 0.0241  aux.acc_seg: 95.2302
+2023/06/14 21:44:00 - mmengine - INFO - Iter(train) [21700/40000]  lr: 4.9978e-03  eta: 3:34:00  time: 0.7406  data_time: 0.0047  memory: 3518  loss: 0.0650  decode.loss_ce: 0.0446  decode.acc_seg: 97.8004  aux.loss_ce: 0.0204  aux.acc_seg: 97.6856
+2023/06/14 21:44:37 - mmengine - INFO - Iter(train) [21750/40000]  lr: 4.9857e-03  eta: 3:33:27  time: 0.7561  data_time: 0.0061  memory: 3518  loss: 0.0566  decode.loss_ce: 0.0354  decode.acc_seg: 98.4599  aux.loss_ce: 0.0212  aux.acc_seg: 98.2682
+2023/06/14 21:45:14 - mmengine - INFO - Iter(train) [21800/40000]  lr: 4.9737e-03  eta: 3:32:53  time: 0.7426  data_time: 0.0044  memory: 3518  loss: 0.0555  decode.loss_ce: 0.0383  decode.acc_seg: 97.0560  aux.loss_ce: 0.0172  aux.acc_seg: 97.1952
