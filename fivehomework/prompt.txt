@@ -1,0 +1,3 @@
+Room with cyberpunk style.      sample_0.png
+The room is designed in cyberpunk style.		cyberpunk_1.png
+The room is designed in Chinese Tang Dynasty style.		chinese_2.png
